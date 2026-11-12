@@ -19,6 +19,7 @@ import {
   getEnrolledCourseIds, 
   enrollInCourse 
 } from './services/catalogService';
+import { getActiveStudentSession, signOutStudent, enrollUserInSupabase } from './services/authService';
 import { AlertCircle, X } from 'lucide-react';
 
 export const App: React.FC = () => {
@@ -44,7 +45,7 @@ export const App: React.FC = () => {
     }
   }, [darkMode]);
 
-  // Student User Session State
+  // Student User Session State with Supabase
   const [currentUser, setCurrentUser] = useState<StudentUser | null>(() => {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem('profesoria_student_user');
@@ -56,6 +57,20 @@ export const App: React.FC = () => {
     }
     return null;
   });
+
+  // Verify Supabase active cloud session on load
+  useEffect(() => {
+    getActiveStudentSession().then((sessionUser) => {
+      if (sessionUser) {
+        setCurrentUser(sessionUser);
+        localStorage.setItem('profesoria_student_user', JSON.stringify(sessionUser));
+        if (sessionUser.enrolledCourseIds && sessionUser.enrolledCourseIds.length > 0) {
+          setEnrolledIds(sessionUser.enrolledCourseIds);
+        }
+      }
+    });
+  }, []);
+
   const [isAuthModalOpen, setIsAuthModalOpen] = useState<boolean>(false);
 
   // Catalog & Enrollment State
@@ -121,13 +136,22 @@ export const App: React.FC = () => {
   };
 
   // Handle student enrollment
-  const handleEnrollCourse = (course: Course) => {
+  const handleEnrollCourse = async (course: Course) => {
     enrollInCourse(course.id);
-    const updated = getEnrolledCourseIds();
-    setEnrolledIds(updated);
-    if (!currentUser) {
+    let updated = getEnrolledCourseIds();
+
+    if (currentUser) {
+      const cloudUpdated = await enrollUserInSupabase(currentUser.id, course.id);
+      updated = cloudUpdated;
+      setCurrentUser({
+        ...currentUser,
+        enrolledCourseIds: updated,
+      });
+    } else {
       setIsAuthModalOpen(true);
     }
+
+    setEnrolledIds(updated);
     handleSelectCourse(course);
   };
 
@@ -364,8 +388,15 @@ export const App: React.FC = () => {
         isOpen={isAuthModalOpen}
         currentUser={currentUser}
         onClose={() => setIsAuthModalOpen(false)}
-        onLogin={(user) => setCurrentUser(user)}
-        onLogout={() => {
+        onLogin={(user) => {
+          setCurrentUser(user);
+          localStorage.setItem('profesoria_student_user', JSON.stringify(user));
+          if (user.enrolledCourseIds) {
+            setEnrolledIds(user.enrolledCourseIds);
+          }
+        }}
+        onLogout={async () => {
+          await signOutStudent();
           localStorage.removeItem('profesoria_student_user');
           setCurrentUser(null);
         }}

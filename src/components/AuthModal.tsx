@@ -1,6 +1,11 @@
 import React, { useState } from 'react';
 import type { StudentUser } from '../types/course';
-import { User, Mail, Lock, X, Check, LogIn, UserPlus } from 'lucide-react';
+import { 
+  signUpStudent, 
+  signInStudent, 
+  resetStudentPassword 
+} from '../services/authService';
+import { User, Mail, Lock, X, Check, LogIn, UserPlus, KeyRound, AlertCircle, Loader2 } from 'lucide-react';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -17,33 +22,58 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   onLogin,
   onLogout,
 }) => {
-  const [isRegisterMode, setIsRegisterMode] = useState<boolean>(false);
+  const [mode, setMode] = useState<'login' | 'register' | 'forgot'>('login');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email) return;
+    setErrorMessage(null);
+    setSuccessMessage(null);
+    setLoading(true);
 
-    const user: StudentUser = {
-      id: 'student_' + Date.now(),
-      name: name.trim() || email.split('@')[0],
-      email: email.trim(),
-      enrolledCourseIds: currentUser?.enrolledCourseIds || ['quimica-organica-ebau'],
-      registeredAt: new Date().toISOString(),
-    };
-
-    localStorage.setItem('profesoria_student_user', JSON.stringify(user));
-    onLogin(user);
-    onClose();
+    try {
+      if (mode === 'register') {
+        const res = await signUpStudent(email.trim(), password, name.trim());
+        if (res.error) {
+          setErrorMessage(res.error);
+        } else if (res.user) {
+          onLogin(res.user);
+          setSuccessMessage('¡Cuenta creada con éxito! Bienvenido al Campus.');
+          setTimeout(() => onClose(), 1200);
+        }
+      } else if (mode === 'login') {
+        const res = await signInStudent(email.trim(), password);
+        if (res.error) {
+          setErrorMessage(res.error);
+        } else if (res.user) {
+          onLogin(res.user);
+          onClose();
+        }
+      } else if (mode === 'forgot') {
+        const res = await resetStudentPassword(email.trim());
+        if (res.error) {
+          setErrorMessage(res.error);
+        } else {
+          setSuccessMessage('Te hemos enviado un correo con instrucciones para restablecer tu contraseña.');
+        }
+      }
+    } catch (err: any) {
+      setErrorMessage(err.message || 'Error en la autenticación');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in">
-      <div className="relative w-full max-w-md bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 p-6 sm:p-7 space-y-6">
+      <div className="relative w-full max-w-md bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 p-6 sm:p-7 space-y-5">
         
         {/* Header */}
         <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
@@ -53,10 +83,16 @@ export const AuthModal: React.FC<AuthModalProps> = ({
             </div>
             <div>
               <h3 className="text-base font-bold text-slate-900 dark:text-white">
-                {currentUser ? 'Perfil de Alumno' : isRegisterMode ? 'Crear Cuenta de Alumno' : 'Iniciar Sesión'}
+                {currentUser 
+                  ? 'Mi Perfil de Alumno' 
+                  : mode === 'register' 
+                    ? 'Crear Cuenta de Alumno' 
+                    : mode === 'forgot'
+                      ? 'Recuperar Contraseña'
+                      : 'Iniciar Sesión'}
               </h3>
               <p className="text-xs text-slate-500 dark:text-slate-400">
-                Guarda tu avance y accede a tus cursos comprados
+                {currentUser ? 'Gestión de tu cuenta en la nube' : 'Accede a tus cursos y guarda tu progreso'}
               </p>
             </div>
           </div>
@@ -69,13 +105,28 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           </button>
         </div>
 
+        {/* Notifications */}
+        {errorMessage && (
+          <div className="p-3 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/50 text-xs text-rose-700 dark:text-rose-300 flex items-center gap-2">
+            <AlertCircle className="w-4 h-4 shrink-0 text-rose-500" />
+            <span>{errorMessage}</span>
+          </div>
+        )}
+
+        {successMessage && (
+          <div className="p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-900/50 text-xs text-emerald-700 dark:text-emerald-300 flex items-center gap-2">
+            <Check className="w-4 h-4 shrink-0 text-emerald-500" />
+            <span>{successMessage}</span>
+          </div>
+        )}
+
         {currentUser ? (
           /* Profile active state */
           <div className="space-y-5">
             <div className="p-4 rounded-2xl bg-violet-50/60 dark:bg-violet-950/30 border border-violet-100 dark:border-violet-900/40 space-y-2">
               <div className="flex items-center gap-2 text-xs font-bold text-violet-800 dark:text-violet-300">
                 <Check className="w-4 h-4 text-emerald-500" />
-                <span>Sesión activa en el Campus</span>
+                <span>Sesión activa en Supabase Cloud</span>
               </div>
               <p className="text-sm font-bold text-slate-800 dark:text-slate-100">
                 {currentUser.name}
@@ -83,6 +134,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               <p className="text-xs text-slate-500 dark:text-slate-400 font-mono">
                 {currentUser.email}
               </p>
+              <div className="pt-2 text-[11px] text-slate-500 dark:text-slate-400">
+                <span>Cursos matriculados: <strong>{currentUser.enrolledCourseIds.length}</strong></span>
+              </div>
             </div>
 
             <button
@@ -96,9 +150,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({
             </button>
           </div>
         ) : (
-          /* Form Login / Register */
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {isRegisterMode && (
+          /* Form Login / Register / Forgot */
+          <form onSubmit={handleSubmit} className="space-y-3.5">
+            {mode === 'register' && (
               <div>
                 <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
                   Nombre completo
@@ -134,31 +188,55 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               </div>
             </div>
 
-            <div>
-              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
-                Contraseña
-              </label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                <input
-                  type="password"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
-                  className="w-full pl-9 pr-3 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 focus:outline-hidden focus:ring-2 focus:ring-violet-500"
-                />
+            {mode !== 'forgot' && (
+              <div>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">
+                    Contraseña
+                  </label>
+                  {mode === 'login' && (
+                    <button
+                      type="button"
+                      onClick={() => setMode('forgot')}
+                      className="text-[11px] text-violet-600 dark:text-violet-400 hover:underline"
+                    >
+                      ¿Olvidaste tu contraseña?
+                    </button>
+                  )}
+                </div>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                  <input
+                    type="password"
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="••••••••"
+                    className="w-full pl-9 pr-3 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 focus:outline-hidden focus:ring-2 focus:ring-violet-500"
+                  />
+                </div>
               </div>
-            </div>
+            )}
 
             <button
               type="submit"
-              className="w-full py-2.5 px-4 text-xs font-bold text-white bg-violet-600 hover:bg-violet-500 rounded-xl shadow-md shadow-violet-500/20 flex items-center justify-center gap-1.5 transition-transform active:scale-95"
+              disabled={loading}
+              className="w-full py-2.5 px-4 text-xs font-bold text-white bg-violet-600 hover:bg-violet-500 rounded-xl shadow-md shadow-violet-500/20 flex items-center justify-center gap-1.5 transition-transform active:scale-95 disabled:opacity-50"
             >
-              {isRegisterMode ? (
+              {loading ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <span>Procesando...</span>
+                </>
+              ) : mode === 'register' ? (
                 <>
                   <UserPlus className="w-4 h-4" />
-                  <span>Crear mi cuenta y acceder</span>
+                  <span>Crear mi cuenta segura</span>
+                </>
+              ) : mode === 'forgot' ? (
+                <>
+                  <KeyRound className="w-4 h-4" />
+                  <span>Enviar enlace de recuperación</span>
                 </>
               ) : (
                 <>
@@ -168,16 +246,37 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               )}
             </button>
 
-            <div className="pt-2 text-center">
-              <button
-                type="button"
-                onClick={() => setIsRegisterMode(!isRegisterMode)}
-                className="text-xs text-violet-600 dark:text-violet-400 hover:underline"
-              >
-                {isRegisterMode 
-                  ? '¿Ya tienes cuenta? Inicia sesión' 
-                  : '¿Nuevo alumno? Regístrate gratis aquí'}
-              </button>
+            {/* Switch mode links */}
+            <div className="pt-2 flex flex-col items-center gap-1.5 text-xs text-center">
+              {mode === 'login' && (
+                <button
+                  type="button"
+                  onClick={() => setMode('register')}
+                  className="text-violet-600 dark:text-violet-400 hover:underline"
+                >
+                  ¿No tienes cuenta? <strong>Regístrate gratis aquí</strong>
+                </button>
+              )}
+
+              {mode === 'register' && (
+                <button
+                  type="button"
+                  onClick={() => setMode('login')}
+                  className="text-violet-600 dark:text-violet-400 hover:underline"
+                >
+                  ¿Ya tienes cuenta? <strong>Inicia sesión</strong>
+                </button>
+              )}
+
+              {mode === 'forgot' && (
+                <button
+                  type="button"
+                  onClick={() => setMode('login')}
+                  className="text-violet-600 dark:text-violet-400 hover:underline"
+                >
+                  ← Volver a Iniciar Sesión
+                </button>
+              )}
             </div>
           </form>
         )}
