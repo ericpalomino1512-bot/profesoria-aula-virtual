@@ -369,10 +369,12 @@ export const App: React.FC = () => {
         )}
 
         {activeView === 'course-creator' && (
-          // Admin / Professor Guard: Only ericpalomino1512@gmail.com or authorized admin accounts
+          // Admin / Professor Guard: Only ericpalomino1512@gmail.com, role admin/teacher, or authorized accounts
           Boolean(currentUser && (
             currentUser.email.toLowerCase() === 'ericpalomino1512@gmail.com' ||
-            currentUser.email.toLowerCase().includes('admin')
+            currentUser.email.toLowerCase().includes('admin') ||
+            currentUser.role === 'admin' ||
+            currentUser.role === 'teacher'
           )) ? (
             <CourseDesignHome
               onGenerate={handleGenerateCourse}

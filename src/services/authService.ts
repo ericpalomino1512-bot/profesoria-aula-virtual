@@ -6,15 +6,29 @@ export interface AuthResponse {
   error: string | null;
 }
 
+// Check if an email is an authorized administrator or professor
+export const isAuthorizedTeacherEmail = (email: string): boolean => {
+  const normalized = email.trim().toLowerCase();
+  const authorized = [
+    'ericpalomino1512@gmail.com',
+    'contacto@tuscursosinmobiliarios.com',
+    'admin@tuscursosinmobiliarios.com'
+  ];
+  return authorized.includes(normalized) || normalized.startsWith('admin@');
+};
+
 // Register new student with Email & Password
 export const signUpStudent = async (email: string, password: string, name: string): Promise<AuthResponse> => {
   try {
+    const isTeacher = isAuthorizedTeacherEmail(email);
+
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
         data: {
           full_name: name,
+          role: isTeacher ? 'admin' : 'student',
         },
       },
     });
@@ -30,6 +44,7 @@ export const signUpStudent = async (email: string, password: string, name: strin
         name: data.user.user_metadata?.full_name || name || email.split('@')[0],
         enrolledCourseIds: ['captacion-exclusivas-ia', 'marketing-inmobiliario-redes'],
         registeredAt: data.user.created_at,
+        role: isTeacher ? 'admin' : 'student',
       };
 
       // Save initial profile in table
@@ -37,6 +52,7 @@ export const signUpStudent = async (email: string, password: string, name: strin
         id: data.user.id,
         email: student.email,
         full_name: student.name,
+        role: student.role,
         enrolled_courses: student.enrolledCourseIds,
         updated_at: new Date().toISOString(),
       });
@@ -63,13 +79,14 @@ export const signInStudent = async (email: string, password: string): Promise<Au
     }
 
     if (data.user) {
-      // Fetch enrolled courses from profiles table
+      // Fetch enrolled courses and role from profiles table
       const { data: profile } = await supabase
         .from('profiles')
-        .select('enrolled_courses, full_name')
+        .select('enrolled_courses, full_name, role')
         .eq('id', data.user.id)
         .single();
 
+      const isTeacher = isAuthorizedTeacherEmail(data.user.email || email) || profile?.role === 'admin' || profile?.role === 'teacher';
       const enrolled = profile?.enrolled_courses || ['captacion-exclusivas-ia', 'marketing-inmobiliario-redes'];
       const fullName = profile?.full_name || data.user.user_metadata?.full_name || email.split('@')[0];
 
@@ -79,6 +96,7 @@ export const signInStudent = async (email: string, password: string): Promise<Au
         name: fullName,
         enrolledCourseIds: enrolled,
         registeredAt: data.user.created_at,
+        role: isTeacher ? 'admin' : (profile?.role || 'student'),
       };
 
       return { user: student, error: null };
@@ -120,9 +138,11 @@ export const getActiveStudentSession = async (): Promise<StudentUser | null> => 
 
     const { data: profile } = await supabase
       .from('profiles')
-      .select('enrolled_courses, full_name')
+      .select('enrolled_courses, full_name, role')
       .eq('id', session.user.id)
       .single();
+
+    const isTeacher = isAuthorizedTeacherEmail(session.user.email || '') || profile?.role === 'admin' || profile?.role === 'teacher';
 
     return {
       id: session.user.id,
@@ -130,6 +150,7 @@ export const getActiveStudentSession = async (): Promise<StudentUser | null> => 
       name: profile?.full_name || session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'Alumno',
       enrolledCourseIds: profile?.enrolled_courses || ['captacion-exclusivas-ia', 'marketing-inmobiliario-redes'],
       registeredAt: session.user.created_at,
+      role: isTeacher ? 'admin' : (profile?.role || 'student'),
     };
   } catch (e) {
     return null;

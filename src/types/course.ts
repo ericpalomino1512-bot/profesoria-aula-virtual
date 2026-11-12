@@ -118,6 +118,7 @@ export interface StudentUser {
   email: string;
   enrolledCourseIds: string[];
   registeredAt: string;
+  role?: 'admin' | 'teacher' | 'student';
 }
 
 export type AppActiveView = 'catalog' | 'my-courses' | 'course-viewer' | 'course-creator';
