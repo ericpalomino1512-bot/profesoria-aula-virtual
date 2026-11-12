@@ -2,7 +2,6 @@ import React, { useRef } from 'react';
 import { 
   Moon, 
   Sun, 
-  Key, 
   PlusCircle, 
   GraduationCap, 
   Share2, 
@@ -17,8 +16,8 @@ import { importCourseFromFile } from '../utils/courseSharing';
 interface NavbarProps {
   darkMode: boolean;
   onToggleDarkMode: () => void;
-  onOpenApiKeyModal: () => void;
-  hasApiKey: boolean;
+  onOpenApiKeyModal?: () => void;
+  hasApiKey?: boolean;
   activeView: AppActiveView;
   onChangeView: (view: AppActiveView) => void;
   currentUser: StudentUser | null;
@@ -30,8 +29,6 @@ interface NavbarProps {
 export const Navbar: React.FC<NavbarProps> = ({
   darkMode,
   onToggleDarkMode,
-  onOpenApiKeyModal,
-  hasApiKey,
   activeView,
   onChangeView,
   currentUser,
@@ -182,20 +179,6 @@ export const Navbar: React.FC<NavbarProps> = ({
             <span className="max-w-[100px] truncate">
               {currentUser ? currentUser.name : 'Ingresar'}
             </span>
-          </button>
-
-          {/* API Key configuration pill */}
-          <button
-            onClick={onOpenApiKeyModal}
-            className={`hidden lg:flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium rounded-xl transition-all ${
-              hasApiKey
-                ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800'
-                : 'text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200'
-            }`}
-            title="Motor Gemini (Opcional)"
-          >
-            <Key className="w-3.5 h-3.5" />
-            <span>{hasApiKey ? 'Gemini OK' : 'Motor IA'}</span>
           </button>
 
           {/* Theme switch */}

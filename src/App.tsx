@@ -7,6 +7,7 @@ import { CourseView } from './components/CourseView';
 import { ApiKeyModal } from './components/ApiKeyModal';
 import { ShareCourseModal } from './components/ShareCourseModal';
 import { AuthModal } from './components/AuthModal';
+import { ProtectedCreatorGate } from './components/ProtectedCreatorGate';
 import type { Course, CourseFormData, AppActiveView, StudentUser, CourseProgress } from './types/course';
 import { generateCourseWithGemini, getStoredApiKey } from './services/geminiService';
 import { buildCourseFromDocuments, buildCourseFromTopic } from './services/localCourseEngine';
@@ -368,14 +369,27 @@ export const App: React.FC = () => {
         )}
 
         {activeView === 'course-creator' && (
-          <CourseDesignHome
-            onGenerate={handleGenerateCourse}
-            onGenerateFromDocuments={handleGenerateFromDocuments}
-            isLoading={isLoading}
-            loadingStepText={loadingStepText}
-            hasApiKey={Boolean(apiKey)}
-            onOpenApiKeyModal={() => setIsApiKeyModalOpen(true)}
-          />
+          // Admin / Professor Guard: Only ericpalomino1512@gmail.com or authorized admin accounts
+          Boolean(currentUser && (
+            currentUser.email.toLowerCase() === 'ericpalomino1512@gmail.com' ||
+            currentUser.email.toLowerCase().includes('admin')
+          )) ? (
+            <CourseDesignHome
+              onGenerate={handleGenerateCourse}
+              onGenerateFromDocuments={handleGenerateFromDocuments}
+              isLoading={isLoading}
+              loadingStepText={loadingStepText}
+              hasApiKey={Boolean(apiKey)}
+              onOpenApiKeyModal={() => setIsApiKeyModalOpen(true)}
+            />
+          ) : (
+            <ProtectedCreatorGate
+              isLoggedIn={Boolean(currentUser)}
+              currentUserEmail={currentUser?.email}
+              onBackToCatalog={() => setActiveView('catalog')}
+              onOpenLogin={() => setIsAuthModalOpen(true)}
+            />
+          )
         )}
 
         {activeView === 'course-viewer' && currentCourse && (

@@ -18,7 +18,7 @@ interface CourseCatalogProps {
   enrolledCourseIds: string[];
   onSelectCourse: (course: Course, startLessonId?: string) => void;
   onEnrollCourse: (course: Course) => void;
-  onOpenCreator: () => void;
+  onOpenCreator?: () => void;
 }
 
 export const CourseCatalog: React.FC<CourseCatalogProps> = ({
@@ -26,7 +26,6 @@ export const CourseCatalog: React.FC<CourseCatalogProps> = ({
   enrolledCourseIds,
   onSelectCourse,
   onEnrollCourse,
-  onOpenCreator,
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('todos');
@@ -74,14 +73,6 @@ export const CourseCatalog: React.FC<CourseCatalogProps> = ({
               <span>← Volver a TusCursosInmobiliarios.com</span>
               <ExternalLink className="w-3.5 h-3.5 opacity-70" />
             </a>
-
-            <button
-              onClick={onOpenCreator}
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-violet-500 to-indigo-600 hover:from-violet-400 hover:to-indigo-500 text-xs sm:text-sm font-bold text-white shadow-lg shadow-violet-600/30 transition-all hover:scale-[1.02] active:scale-95"
-            >
-              <Sparkles className="w-4 h-4 text-amber-300" />
-              <span>+ Crear Nuevo Curso con IA</span>
-            </button>
           </div>
         </div>
       </div>
