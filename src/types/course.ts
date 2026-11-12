@@ -104,7 +104,23 @@ export interface Course {
   finalProjects: FinalProject[];
   sourcesAndReferences: SourceReference[];
   createdAt: string;
+  // Catalog & commercial metadata
+  price?: number;
+  currency?: string;
+  category?: string;
+  thumbnailUrl?: string;
+  isPublished?: boolean;
 }
+
+export interface StudentUser {
+  id: string;
+  name: string;
+  email: string;
+  enrolledCourseIds: string[];
+  registeredAt: string;
+}
+
+export type AppActiveView = 'catalog' | 'my-courses' | 'course-viewer' | 'course-creator';
 
 export interface CourseProgress {
   completedLessonIds: string[];

@@ -1,15 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { Navbar } from './components/Navbar';
+import { CourseCatalog } from './components/CourseCatalog';
+import { MyCoursesView } from './components/MyCoursesView';
 import { CourseDesignHome } from './components/CourseDesignHome';
 import { CourseView } from './components/CourseView';
 import { ApiKeyModal } from './components/ApiKeyModal';
 import { ShareCourseModal } from './components/ShareCourseModal';
-import type { Course, CourseFormData } from './types/course';
+import { AuthModal } from './components/AuthModal';
+import type { Course, CourseFormData, AppActiveView, StudentUser, CourseProgress } from './types/course';
 import { generateCourseWithGemini, getStoredApiKey } from './services/geminiService';
 import { buildCourseFromDocuments, buildCourseFromTopic } from './services/localCourseEngine';
 import type { ParsedDocument } from './services/documentParser';
 import { getSharedCourseFromUrl } from './utils/courseSharing';
 import { DEMO_COURSE } from './services/demoCourse';
+import { 
+  getStoredCatalog, 
+  saveCatalogCourse, 
+  getEnrolledCourseIds, 
+  enrollInCourse 
+} from './services/catalogService';
 import { AlertCircle, X } from 'lucide-react';
 
 export const App: React.FC = () => {
@@ -35,12 +44,33 @@ export const App: React.FC = () => {
     }
   }, [darkMode]);
 
-  // API Key state
-  const [apiKey, setApiKey] = useState<string>(getStoredApiKey());
-  const [isApiKeyModalOpen, setIsApiKeyModalOpen] = useState<boolean>(false);
-  const [isShareModalOpen, setIsShareModalOpen] = useState<boolean>(false);
+  // Student User Session State
+  const [currentUser, setCurrentUser] = useState<StudentUser | null>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('profesoria_student_user');
+      if (saved) {
+        try {
+          return JSON.parse(saved);
+        } catch (e) {}
+      }
+    }
+    return null;
+  });
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState<boolean>(false);
 
-  // Active course & view state (first checks if a course is passed in the URL, then local storage)
+  // Catalog & Enrollment State
+  const [catalogCourses, setCatalogCourses] = useState<Course[]>(() => getStoredCatalog());
+  const [enrolledIds, setEnrolledIds] = useState<string[]>(() => getEnrolledCourseIds());
+
+  // Active view: 'catalog' | 'my-courses' | 'course-viewer' | 'course-creator'
+  const [activeView, setActiveView] = useState<AppActiveView>(() => {
+    // If URL has a shared course hash, open viewer immediately
+    const sharedFromUrl = getSharedCourseFromUrl();
+    if (sharedFromUrl) return 'course-viewer';
+    return 'catalog';
+  });
+
+  // Active course for viewer
   const [currentCourse, setCurrentCourse] = useState<Course | null>(() => {
     const sharedFromUrl = getSharedCourseFromUrl();
     if (sharedFromUrl) {
@@ -55,10 +85,51 @@ export const App: React.FC = () => {
     return null;
   });
 
+  // Progress map per course
+  const [progressMap, setProgressMap] = useState<Record<string, CourseProgress>>({});
+
+  useEffect(() => {
+    // Load progress for each catalog course
+    const map: Record<string, CourseProgress> = {};
+    catalogCourses.forEach(c => {
+      const saved = localStorage.getItem(`progress_${c.id}`);
+      if (saved) {
+        try {
+          map[c.id] = JSON.parse(saved);
+        } catch (e) {}
+      }
+    });
+    setProgressMap(map);
+  }, [catalogCourses]);
+
+  // API Key state
+  const [apiKey, setApiKey] = useState<string>(getStoredApiKey());
+  const [isApiKeyModalOpen, setIsApiKeyModalOpen] = useState<boolean>(false);
+  const [isShareModalOpen, setIsShareModalOpen] = useState<boolean>(false);
+
   // Loading and error states
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [loadingStepText, setLoadingStepText] = useState<string>('');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  // Handle course selection
+  const handleSelectCourse = (course: Course) => {
+    setCurrentCourse(course);
+    localStorage.setItem('current_course_data', JSON.stringify(course));
+    setActiveView('course-viewer');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // Handle student enrollment
+  const handleEnrollCourse = (course: Course) => {
+    enrollInCourse(course.id);
+    const updated = getEnrolledCourseIds();
+    setEnrolledIds(updated);
+    if (!currentUser) {
+      setIsAuthModalOpen(true);
+    }
+    handleSelectCourse(course);
+  };
 
   // Generate course by topic/prompt
   const handleGenerateCourse = async (formData: CourseFormData) => {
@@ -67,15 +138,14 @@ export const App: React.FC = () => {
     setLoadingStepText('Iniciando diseño instruccional...');
 
     try {
+      let course: Course;
       if (apiKey.trim()) {
         // Mode 1: Gemini Cloud
         setLoadingStepText('Conectando con Google Gemini en la nube...');
-        const course = await generateCourseWithGemini(
+        course = await generateCourseWithGemini(
           { ...formData, apiKey },
           (status) => setLoadingStepText(status)
         );
-        setCurrentCourse(course);
-        localStorage.setItem('current_course_data', JSON.stringify(course));
       } else {
         // Mode 2: 100% Autonomous Local Synthesis - NO API KEY REQUIRED!
         setLoadingStepText('Diseñando rutas pedagógicas con el motor autónomo local...');
@@ -83,24 +153,36 @@ export const App: React.FC = () => {
         setLoadingStepText('Estructurando lecciones, videos, actividades y plantillas Excel...');
         await new Promise((r) => setTimeout(r, 600));
 
-        const course = buildCourseFromTopic(formData);
-        setCurrentCourse(course);
-        localStorage.setItem('current_course_data', JSON.stringify(course));
+        course = buildCourseFromTopic(formData);
       }
 
+      // Add to catalog & enroll author
+      saveCatalogCourse(course);
+      enrollInCourse(course.id);
+      setCatalogCourses(getStoredCatalog());
+      setEnrolledIds(getEnrolledCourseIds());
+
+      setCurrentCourse(course);
+      localStorage.setItem('current_course_data', JSON.stringify(course));
+      setActiveView('course-viewer');
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (err: any) {
       console.error('Error al generar curso:', err);
-      // Fallback to local engine automatically so user is never blocked!
       try {
         setLoadingStepText('Generando con el motor instruccional local...');
         const localCourse = buildCourseFromTopic(formData);
+        saveCatalogCourse(localCourse);
+        enrollInCourse(localCourse.id);
+        setCatalogCourses(getStoredCatalog());
+        setEnrolledIds(getEnrolledCourseIds());
+
         setCurrentCourse(localCourse);
         localStorage.setItem('current_course_data', JSON.stringify(localCourse));
+        setActiveView('course-viewer');
         window.scrollTo({ top: 0, behavior: 'smooth' });
       } catch (fallbackErr: any) {
         setErrorMessage(
-          err.message || 'No se pudo conectar con la API de Gemini. Revisa tu clave o prueba de nuevo.'
+          err.message || 'No se pudo generar el curso. Prueba de nuevo.'
         );
       }
     } finally {
@@ -116,39 +198,48 @@ export const App: React.FC = () => {
     setLoadingStepText('Analizando diapositivas y secciones documentales...');
 
     try {
+      let course: Course;
       if (apiKey.trim()) {
-        // Mode 1: Gemini Cloud with Document Grounding
         setLoadingStepText('Sintetizando contenidos con Gemini y tus documentos...');
         const documentContext = docs
           .map(d => `--- Archivo: ${d.name} ---\n${d.extractedText}`)
           .join('\n\n');
 
-        const course = await generateCourseWithGemini(
+        course = await generateCourseWithGemini(
           { ...formData, apiKey },
           (status) => setLoadingStepText(status),
           documentContext
         );
-
-        setCurrentCourse(course);
-        localStorage.setItem('current_course_data', JSON.stringify(course));
       } else {
-        // Mode 2: 100% Autonomous Local Synthesis from Documents - NO API KEY REQUIRED!
         setLoadingStepText('Estructurando rutas de aprendizaje de tus diapositivas y documentos...');
         await new Promise((r) => setTimeout(r, 800));
 
-        const localCourse = buildCourseFromDocuments(docs, formData);
-        setCurrentCourse(localCourse);
-        localStorage.setItem('current_course_data', JSON.stringify(localCourse));
+        course = buildCourseFromDocuments(docs, formData);
       }
 
+      // Add to catalog & enroll author
+      saveCatalogCourse(course);
+      enrollInCourse(course.id);
+      setCatalogCourses(getStoredCatalog());
+      setEnrolledIds(getEnrolledCourseIds());
+
+      setCurrentCourse(course);
+      localStorage.setItem('current_course_data', JSON.stringify(course));
+      setActiveView('course-viewer');
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (err: any) {
       console.error('Error al generar curso desde documentos:', err);
       try {
         setLoadingStepText('Recuperando estructura mediante motor instruccional local...');
         const fallbackCourse = buildCourseFromDocuments(docs, formData);
+        saveCatalogCourse(fallbackCourse);
+        enrollInCourse(fallbackCourse.id);
+        setCatalogCourses(getStoredCatalog());
+        setEnrolledIds(getEnrolledCourseIds());
+
         setCurrentCourse(fallbackCourse);
         localStorage.setItem('current_course_data', JSON.stringify(fallbackCourse));
+        setActiveView('course-viewer');
         window.scrollTo({ top: 0, behavior: 'smooth' });
       } catch (fallbackErr: any) {
         setErrorMessage(`No se pudo procesar el material: ${err.message || 'Error desconocido'}`);
@@ -159,26 +250,18 @@ export const App: React.FC = () => {
     }
   };
 
-  const handleResetCourse = () => {
-    setCurrentCourse(null);
-    localStorage.removeItem('current_course_data');
-    if (window.location.hash) {
-      window.history.pushState('', document.title, window.location.pathname + window.location.search);
-    }
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  const handleLoadDemo = () => {
-    setCurrentCourse(DEMO_COURSE);
-    localStorage.setItem('current_course_data', JSON.stringify(DEMO_COURSE));
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
   const handleCourseImported = (imported: Course) => {
+    saveCatalogCourse(imported);
+    enrollInCourse(imported.id);
+    setCatalogCourses(getStoredCatalog());
+    setEnrolledIds(getEnrolledCourseIds());
     setCurrentCourse(imported);
     localStorage.setItem('current_course_data', JSON.stringify(imported));
+    setActiveView('course-viewer');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
+
+  const enrolledCoursesList = catalogCourses.filter(c => enrolledIds.includes(c.id));
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-[#0c0e17] text-slate-800 dark:text-slate-100 transition-colors flex flex-col font-sans selection:bg-violet-500 selection:text-white">
@@ -189,8 +272,13 @@ export const App: React.FC = () => {
         onToggleDarkMode={() => setDarkMode(!darkMode)}
         onOpenApiKeyModal={() => setIsApiKeyModalOpen(true)}
         hasApiKey={Boolean(apiKey)}
-        isInCourseView={Boolean(currentCourse)}
-        onResetCourse={handleResetCourse}
+        activeView={activeView}
+        onChangeView={(view) => {
+          setActiveView(view);
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }}
+        currentUser={currentUser}
+        onOpenAuthModal={() => setIsAuthModalOpen(true)}
         onOpenShareModal={() => setIsShareModalOpen(true)}
         onCourseImported={handleCourseImported}
       />
@@ -210,10 +298,10 @@ export const App: React.FC = () => {
                 </p>
                 <div className="mt-2 flex gap-3">
                   <button
-                    onClick={handleLoadDemo}
+                    onClick={() => handleSelectCourse(DEMO_COURSE)}
                     className="text-xs font-bold underline hover:text-rose-950 dark:hover:text-white"
                   >
-                    Cargar aula virtual de muestra interactiva
+                    Cargar aula de muestra interactiva
                   </button>
                   <button
                     onClick={() => setIsApiKeyModalOpen(true)}
@@ -234,9 +322,28 @@ export const App: React.FC = () => {
         </div>
       )}
 
-      {/* Main Views */}
-      <div className="flex-1">
-        {!currentCourse ? (
+      {/* Main Views Coordinator */}
+      <main className="flex-1">
+        {activeView === 'catalog' && (
+          <CourseCatalog
+            courses={catalogCourses}
+            enrolledCourseIds={enrolledIds}
+            onSelectCourse={handleSelectCourse}
+            onEnrollCourse={handleEnrollCourse}
+            onOpenCreator={() => setActiveView('course-creator')}
+          />
+        )}
+
+        {activeView === 'my-courses' && (
+          <MyCoursesView
+            enrolledCourses={enrolledCoursesList}
+            progressMap={progressMap}
+            onSelectCourse={handleSelectCourse}
+            onExploreCatalog={() => setActiveView('catalog')}
+          />
+        )}
+
+        {activeView === 'course-creator' && (
           <CourseDesignHome
             onGenerate={handleGenerateCourse}
             onGenerateFromDocuments={handleGenerateFromDocuments}
@@ -245,10 +352,24 @@ export const App: React.FC = () => {
             hasApiKey={Boolean(apiKey)}
             onOpenApiKeyModal={() => setIsApiKeyModalOpen(true)}
           />
-        ) : (
+        )}
+
+        {activeView === 'course-viewer' && currentCourse && (
           <CourseView course={currentCourse} />
         )}
-      </div>
+      </main>
+
+      {/* Auth / Student Profile Modal */}
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        currentUser={currentUser}
+        onClose={() => setIsAuthModalOpen(false)}
+        onLogin={(user) => setCurrentUser(user)}
+        onLogout={() => {
+          localStorage.removeItem('profesoria_student_user');
+          setCurrentUser(null);
+        }}
+      />
 
       {/* API Key configuration modal */}
       <ApiKeyModal

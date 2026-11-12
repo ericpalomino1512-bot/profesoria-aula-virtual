@@ -6,9 +6,12 @@ import {
   PlusCircle, 
   GraduationCap, 
   Share2, 
-  FolderOpen 
+  FolderOpen,
+  BookOpen,
+  User,
+  ArrowLeft
 } from 'lucide-react';
-import type { Course } from '../types/course';
+import type { Course, AppActiveView, StudentUser } from '../types/course';
 import { importCourseFromFile } from '../utils/courseSharing';
 
 interface NavbarProps {
@@ -16,8 +19,10 @@ interface NavbarProps {
   onToggleDarkMode: () => void;
   onOpenApiKeyModal: () => void;
   hasApiKey: boolean;
-  isInCourseView: boolean;
-  onResetCourse?: () => void;
+  activeView: AppActiveView;
+  onChangeView: (view: AppActiveView) => void;
+  currentUser: StudentUser | null;
+  onOpenAuthModal: () => void;
   onOpenShareModal?: () => void;
   onCourseImported?: (course: Course) => void;
 }
@@ -27,8 +32,10 @@ export const Navbar: React.FC<NavbarProps> = ({
   onToggleDarkMode,
   onOpenApiKeyModal,
   hasApiKey,
-  isInCourseView,
-  onResetCourse,
+  activeView,
+  onChangeView,
+  currentUser,
+  onOpenAuthModal,
   onOpenShareModal,
   onCourseImported,
 }) => {
@@ -46,38 +53,77 @@ export const Navbar: React.FC<NavbarProps> = ({
   };
 
   return (
-    <header className="sticky top-0 z-40 w-full backdrop-blur-md bg-white/80 dark:bg-slate-900/80 border-b border-purple-100 dark:border-slate-800 transition-colors">
+    <header className="sticky top-0 z-40 w-full backdrop-blur-md bg-white/90 dark:bg-slate-900/90 border-b border-purple-100 dark:border-slate-800 transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         
         {/* Brand */}
-        <div 
-          onClick={onResetCourse}
-          className="flex items-center gap-3 cursor-pointer group"
-          role="button"
-          tabIndex={0}
-        >
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-violet-600 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-violet-500/20 group-hover:scale-105 transition-transform">
-            <GraduationCap className="w-5 h-5" />
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="text-lg font-bold bg-gradient-to-r from-violet-600 to-indigo-600 bg-clip-text text-transparent dark:from-violet-400 dark:to-indigo-300">
-                ProfesorIA
-              </span>
-              <span className="text-xs px-2 py-0.5 rounded-full font-medium bg-purple-100 text-purple-700 dark:bg-purple-900/50 dark:text-purple-300 border border-purple-200 dark:border-purple-800">
-                Aula Virtual
-              </span>
+        <div className="flex items-center gap-3">
+          <div 
+            onClick={() => onChangeView('catalog')}
+            className="flex items-center gap-2.5 cursor-pointer group"
+            role="button"
+            tabIndex={0}
+          >
+            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-violet-600 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-violet-500/20 group-hover:scale-105 transition-transform">
+              <GraduationCap className="w-5 h-5" />
             </div>
-            <p className="text-[11px] text-slate-500 dark:text-slate-400 font-normal hidden sm:block">
-              Diseño instruccional con Google Gemini
-            </p>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-base sm:text-lg font-black bg-gradient-to-r from-violet-600 to-indigo-600 bg-clip-text text-transparent dark:from-violet-400 dark:to-indigo-300">
+                  TusCursosInmobiliarios
+                </span>
+                <span className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-md font-bold bg-purple-100 text-purple-700 dark:bg-purple-950/70 dark:text-purple-300 border border-purple-200 dark:border-purple-800">
+                  Campus
+                </span>
+              </div>
+              <p className="text-[11px] text-slate-500 dark:text-slate-400 font-normal hidden sm:block">
+                Aula Virtual & Generador IA
+              </p>
+            </div>
           </div>
         </div>
 
-        {/* Actions */}
-        <div className="flex items-center gap-2 sm:gap-2.5">
+        {/* Center Navigation Tabs (Udemy Style) */}
+        <nav className="hidden md:flex items-center gap-1 bg-slate-100/80 dark:bg-slate-800/80 p-1 rounded-2xl border border-slate-200/60 dark:border-slate-700/60">
+          <button
+            onClick={() => onChangeView('catalog')}
+            className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
+              activeView === 'catalog'
+                ? 'bg-white dark:bg-slate-900 text-violet-700 dark:text-violet-300 shadow-xs'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+            }`}
+          >
+            Catálogo
+          </button>
+
+          <button
+            onClick={() => onChangeView('my-courses')}
+            className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
+              activeView === 'my-courses'
+                ? 'bg-white dark:bg-slate-900 text-violet-700 dark:text-violet-300 shadow-xs'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+            }`}
+          >
+            Mis Cursos
+          </button>
+
+          <button
+            onClick={() => onChangeView('course-creator')}
+            className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
+              activeView === 'course-creator'
+                ? 'bg-violet-600 text-white shadow-xs'
+                : 'text-violet-600 dark:text-violet-400 hover:bg-violet-50 dark:hover:bg-violet-950/30'
+            }`}
+          >
+            <PlusCircle className="w-3.5 h-3.5" />
+            <span>Crear Curso</span>
+          </button>
+        </nav>
+
+        {/* Actions & Profile */}
+        <div className="flex items-center gap-1.5 sm:gap-2">
           
-          {/* Hidden file input for importing */}
+          {/* Hidden file input */}
           <input
             ref={fileInputRef}
             type="file"
@@ -86,70 +132,113 @@ export const Navbar: React.FC<NavbarProps> = ({
             className="hidden"
           />
 
-          {isInCourseView ? (
+          {/* If viewing a course, show Share & Back to catalog */}
+          {activeView === 'course-viewer' && (
             <>
-              {/* Share button */}
+              <button
+                onClick={() => onChangeView('catalog')}
+                className="flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl"
+                title="Volver al catálogo"
+              >
+                <ArrowLeft className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">Catálogo</span>
+              </button>
+
               <button
                 onClick={onOpenShareModal}
-                className="flex items-center gap-1.5 px-3 py-1.5 text-xs sm:text-sm font-bold text-white bg-violet-600 hover:bg-violet-500 rounded-xl shadow-xs transition-transform active:scale-95"
-                title="Compartir curso con enlace o archivo"
+                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-white bg-violet-600 hover:bg-violet-500 rounded-xl shadow-xs transition-transform active:scale-95"
+                title="Compartir curso con enlace"
               >
                 <Share2 className="w-3.5 h-3.5" />
                 <span>Compartir</span>
               </button>
-
-              {/* New course button */}
-              <button
-                onClick={onResetCourse}
-                className="flex items-center gap-1.5 px-3 py-1.5 text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-200 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 rounded-xl transition-colors"
-              >
-                <PlusCircle className="w-4 h-4 text-violet-600 dark:text-violet-400" />
-                <span className="hidden sm:inline">Nuevo curso</span>
-              </button>
             </>
-          ) : (
-            /* Import course button when on Home */
-            <button
-              onClick={() => fileInputRef.current?.click()}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-200 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 rounded-xl transition-colors"
-              title="Cargar un curso exportado (.json)"
-            >
-              <FolderOpen className="w-4 h-4 text-violet-600 dark:text-violet-400" />
-              <span className="hidden sm:inline">Abrir Curso</span>
-            </button>
           )}
+
+          {/* Quick Creator Button for mobile */}
+          <button
+            onClick={() => onChangeView('course-creator')}
+            className="md:hidden p-2 text-violet-600 dark:text-violet-400 hover:bg-violet-50 dark:hover:bg-violet-950/50 rounded-xl"
+            title="Crear Curso"
+          >
+            <PlusCircle className="w-5 h-5" />
+          </button>
+
+          {/* Quick Import */}
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            className="p-2 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors"
+            title="Abrir archivo de curso (.json)"
+          >
+            <FolderOpen className="w-4 h-4" />
+          </button>
+
+          {/* Student Profile / Login button */}
+          <button
+            onClick={onOpenAuthModal}
+            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-xl text-slate-700 dark:text-slate-200 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 transition-colors"
+          >
+            <User className="w-3.5 h-3.5 text-violet-600 dark:text-violet-400" />
+            <span className="max-w-[100px] truncate">
+              {currentUser ? currentUser.name : 'Ingresar'}
+            </span>
+          </button>
 
           {/* API Key configuration pill */}
           <button
             onClick={onOpenApiKeyModal}
-            className={`flex items-center gap-1.5 px-3 py-1.5 text-xs sm:text-sm font-medium rounded-xl transition-all ${
+            className={`hidden lg:flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium rounded-xl transition-all ${
               hasApiKey
                 ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800'
-                : 'bg-violet-50 text-violet-700 border border-violet-200 hover:bg-violet-100 dark:bg-violet-950/40 dark:text-violet-300 dark:border-violet-800 dark:hover:bg-violet-900/60'
+                : 'text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200'
             }`}
-            title="Configurar clave de Google Gemini (Opcional)"
+            title="Motor Gemini (Opcional)"
           >
             <Key className="w-3.5 h-3.5" />
-            <span className="hidden md:inline">
-              {hasApiKey ? 'Gemini Conectado' : 'API Key Gemini'}
-            </span>
-            <span className="md:hidden">API</span>
+            <span>{hasApiKey ? 'Gemini OK' : 'Motor IA'}</span>
           </button>
 
           {/* Theme switch */}
           <button
             onClick={onToggleDarkMode}
-            className="p-2 rounded-xl text-slate-600 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 dark:text-slate-300 dark:hover:text-white dark:bg-slate-800 dark:hover:bg-slate-700 transition-colors"
-            aria-label={darkMode ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'}
+            className="p-2 rounded-xl text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
             title={darkMode ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'}
           >
-            {darkMode ? (
-              <Sun className="w-4 h-4 text-amber-400" />
-            ) : (
-              <Moon className="w-4 h-4 text-violet-600" />
-            )}
+            {darkMode ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4" />}
           </button>
+
         </div>
+      </div>
+
+      {/* Mobile Sub-Navigation Bar */}
+      <div className="md:hidden flex items-center justify-around border-t border-slate-100 dark:border-slate-800 py-2 bg-slate-50/50 dark:bg-slate-900/50 text-xs">
+        <button
+          onClick={() => onChangeView('catalog')}
+          className={`flex items-center gap-1 font-semibold ${
+            activeView === 'catalog' ? 'text-violet-600 font-bold' : 'text-slate-500'
+          }`}
+        >
+          <BookOpen className="w-3.5 h-3.5" />
+          <span>Catálogo</span>
+        </button>
+        <button
+          onClick={() => onChangeView('my-courses')}
+          className={`flex items-center gap-1 font-semibold ${
+            activeView === 'my-courses' ? 'text-violet-600 font-bold' : 'text-slate-500'
+          }`}
+        >
+          <GraduationCap className="w-3.5 h-3.5" />
+          <span>Mis Cursos</span>
+        </button>
+        <button
+          onClick={() => onChangeView('course-creator')}
+          className={`flex items-center gap-1 font-semibold ${
+            activeView === 'course-creator' ? 'text-violet-600 font-bold' : 'text-slate-500'
+          }`}
+        >
+          <PlusCircle className="w-3.5 h-3.5 text-violet-600" />
+          <span>Crear</span>
+        </button>
       </div>
     </header>
   );
