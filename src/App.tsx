@@ -9,6 +9,7 @@ import { ShareCourseModal } from './components/ShareCourseModal';
 import { AuthModal } from './components/AuthModal';
 import { ProtectedCreatorGate } from './components/ProtectedCreatorGate';
 import { TeacherManagerModal } from './components/TeacherManagerModal';
+import { UserDashboard } from './components/UserDashboard';
 import type { Course, CourseFormData, AppActiveView, StudentUser, CourseProgress } from './types/course';
 import { generateCourseWithGemini, getStoredApiKey } from './services/geminiService';
 import { buildCourseFromDocuments, buildCourseFromTopic } from './services/localCourseEngine';
@@ -107,6 +108,28 @@ export const App: React.FC = () => {
 
   // Progress map per course
   const [progressMap, setProgressMap] = useState<Record<string, CourseProgress>>({});
+
+  // Wishlist state ("Me gusta")
+  const [wishlistIds, setWishlistIds] = useState<string[]>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('profesoria_wishlist_courses');
+      if (saved) {
+        try {
+          return JSON.parse(saved);
+        } catch (e) {}
+      }
+    }
+    return [];
+  });
+
+  const handleToggleWishlist = (courseId: string) => {
+    const updated = wishlistIds.includes(courseId)
+      ? wishlistIds.filter(id => id !== courseId)
+      : [...wishlistIds, courseId];
+    
+    setWishlistIds(updated);
+    localStorage.setItem('profesoria_wishlist_courses', JSON.stringify(updated));
+  };
 
   useEffect(() => {
     // Load progress for each catalog course
@@ -291,6 +314,7 @@ export const App: React.FC = () => {
   };
 
   const enrolledCoursesList = catalogCourses.filter(c => enrolledIds.includes(c.id));
+  const wishlistCoursesList = catalogCourses.filter(c => wishlistIds.includes(c.id));
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-[#0c0e17] text-slate-800 dark:text-slate-100 transition-colors flex flex-col font-sans selection:bg-violet-500 selection:text-white">
@@ -362,6 +386,8 @@ export const App: React.FC = () => {
           <CourseCatalog
             courses={catalogCourses}
             enrolledCourseIds={enrolledIds}
+            wishlistCourseIds={wishlistIds}
+            onToggleWishlist={handleToggleWishlist}
             onSelectCourse={handleSelectCourse}
             onEnrollCourse={handleEnrollCourse}
             onOpenCreator={() => setActiveView('course-creator')}
@@ -371,8 +397,22 @@ export const App: React.FC = () => {
         {activeView === 'my-courses' && (
           <MyCoursesView
             enrolledCourses={enrolledCoursesList}
+            wishlistCourses={wishlistCoursesList}
             progressMap={progressMap}
             onSelectCourse={handleSelectCourse}
+            onExploreCatalog={() => setActiveView('catalog')}
+            onRemoveFromWishlist={handleToggleWishlist}
+          />
+        )}
+
+        {activeView === 'dashboard' && currentUser && (
+          <UserDashboard
+            currentUser={currentUser}
+            catalogCourses={catalogCourses}
+            enrolledCourses={enrolledCoursesList}
+            progressMap={progressMap}
+            onSelectCourse={handleSelectCourse}
+            onOpenCreator={() => setActiveView('course-creator')}
             onExploreCatalog={() => setActiveView('catalog')}
           />
         )}
@@ -424,7 +464,7 @@ export const App: React.FC = () => {
         isOpen={isAuthModalOpen}
         currentUser={currentUser}
         initialMode={authModalInitialMode}
-        isTeacherTarget={authModalIsTeacherTarget}
+        initialRoleTarget={authModalIsTeacherTarget ? 'teacher' : 'student'}
         onClose={() => setIsAuthModalOpen(false)}
         onLogin={(user) => {
           setCurrentUser(user);

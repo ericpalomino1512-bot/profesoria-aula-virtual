@@ -10,12 +10,15 @@ import {
   ExternalLink, 
   Search,
   Lock,
-  Layers
+  Layers,
+  Heart
 } from 'lucide-react';
 
 interface CourseCatalogProps {
   courses: Course[];
   enrolledCourseIds: string[];
+  wishlistCourseIds?: string[];
+  onToggleWishlist?: (courseId: string) => void;
   onSelectCourse: (course: Course, startLessonId?: string) => void;
   onEnrollCourse: (course: Course) => void;
   onOpenCreator?: () => void;
@@ -24,6 +27,8 @@ interface CourseCatalogProps {
 export const CourseCatalog: React.FC<CourseCatalogProps> = ({
   courses,
   enrolledCourseIds,
+  wishlistCourseIds = [],
+  onToggleWishlist,
   onSelectCourse,
   onEnrollCourse,
 }) => {
@@ -128,15 +133,32 @@ export const CourseCatalog: React.FC<CourseCatalogProps> = ({
                   {course.level}
                 </span>
 
-                <div className="flex items-center gap-1 text-xs font-bold text-slate-700 dark:text-slate-300">
-                  {course.price && course.price > 0 ? (
-                    <span className="text-sm font-black text-emerald-600 dark:text-emerald-400">
-                      ${course.price} {course.currency || 'USD'}
-                    </span>
-                  ) : (
-                    <span className="text-emerald-600 dark:text-emerald-400 font-bold">
-                      Gratuito
-                    </span>
+                <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1 text-xs font-bold text-slate-700 dark:text-slate-300">
+                    {course.price && course.price > 0 ? (
+                      <span className="text-sm font-black text-emerald-600 dark:text-emerald-400">
+                        ${course.price} {course.currency || 'USD'}
+                      </span>
+                    ) : (
+                      <span className="text-emerald-600 dark:text-emerald-400 font-bold">
+                        Gratuito
+                      </span>
+                    )}
+                  </div>
+
+                  {onToggleWishlist && (
+                    <button
+                      type="button"
+                      onClick={() => onToggleWishlist(course.id)}
+                      className={`p-1.5 rounded-xl border transition-all ${
+                        wishlistCourseIds.includes(course.id)
+                          ? 'bg-rose-50 border-rose-200 text-rose-600 dark:bg-rose-950/60 dark:border-rose-900 dark:text-rose-400'
+                          : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-400 hover:text-rose-500 hover:border-rose-200'
+                      }`}
+                      title={wishlistCourseIds.includes(course.id) ? 'Quitar de mis favoritos' : 'Me gusta / Guardar en favoritos'}
+                    >
+                      <Heart className={`w-4 h-4 ${wishlistCourseIds.includes(course.id) ? 'fill-rose-500' : ''}`} />
+                    </button>
                   )}
                 </div>
               </div>

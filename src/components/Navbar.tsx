@@ -107,6 +107,20 @@ export const Navbar: React.FC<NavbarProps> = ({
             Mis Cursos
           </button>
 
+          {/* User Dashboard Tab (for logged in students or teachers) */}
+          {currentUser && (
+            <button
+              onClick={() => onChangeView('dashboard')}
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                activeView === 'dashboard'
+                  ? 'bg-white dark:bg-slate-900 text-violet-700 dark:text-violet-300 shadow-xs'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+              }`}
+            >
+              Dashboard
+            </button>
+          )}
+
           <button
             onClick={() => onChangeView('course-creator')}
             className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all ${

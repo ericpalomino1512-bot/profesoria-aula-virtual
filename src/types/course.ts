@@ -117,11 +117,12 @@ export interface StudentUser {
   name: string;
   email: string;
   enrolledCourseIds: string[];
+  wishlistCourseIds?: string[]; // "Me gusta" / Guardados para después
   registeredAt: string;
   role?: 'admin' | 'teacher' | 'student';
 }
 
-export type AppActiveView = 'catalog' | 'my-courses' | 'course-viewer' | 'course-creator';
+export type AppActiveView = 'catalog' | 'my-courses' | 'dashboard' | 'course-viewer' | 'course-creator';
 
 export interface CourseProgress {
   completedLessonIds: string[];
