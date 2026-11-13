@@ -71,7 +71,7 @@ export const ProtectedCreatorGate: React.FC<ProtectedCreatorGateProps> = ({
         )}
 
         <a
-          href="mailto:contacto@tuscursosinmobiliarios.com?subject=Solicitud%20de%20Acceso%20Docente%20-%20TusCursosInmobiliarios&body=Hola%2C%20deseo%20solicitar%20acceso%20como%20profesor%20para%20publicar%20un%20curso%20en%20el%20Campus%20Virtual.%0A%0ANombre%20completo%3A%0ACorreo%3A%0ATema%20del%20curso%3A"
+          href="mailto:hola@tucorretaje.com?subject=Solicitud%20de%20Acceso%20Docente%20-%20TusCursosInmobiliarios&body=Hola%2C%20deseo%20solicitar%20acceso%20como%20profesor%20para%20publicar%20un%20curso%20en%20el%20Campus%20Virtual.%0A%0ANombre%20completo%3A%0ACorreo%3A%0ATema%20del%20curso%3A"
           className="px-5 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-bold border border-slate-200 dark:border-slate-700 transition-colors"
         >
           <span>Solicitar ser Profesor (Email)</span>
