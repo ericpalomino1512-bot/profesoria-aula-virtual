@@ -6,16 +6,29 @@ export interface AuthResponse {
   error: string | null;
 }
 
-// Check if an email is an authorized administrator or professor
-export const isAuthorizedTeacherEmail = (email: string): boolean => {
+// Check if an email is an authorized administrator or professor (Checks local superadmins + Supabase cloud database)
+export const isAuthorizedTeacherEmail = async (email: string): Promise<boolean> => {
   const normalized = email.trim().toLowerCase();
-  const authorized = [
+  
+  // Superadmins
+  const superadmins = [
     'ericpalomino1512@gmail.com',
-    'contacto@tuscursosinmobiliarios.com',
-    'admin@tuscursosinmobiliarios.com',
     'hola@tucorretaje.com'
   ];
-  return authorized.includes(normalized) || normalized.startsWith('admin@');
+  if (superadmins.includes(normalized)) return true;
+
+  // Check in Supabase authorized_teachers table
+  try {
+    const { data } = await supabase
+      .from('authorized_teachers')
+      .select('email')
+      .ilike('email', normalized)
+      .maybeSingle();
+
+    return Boolean(data);
+  } catch (e) {
+    return false;
+  }
 };
 
 // Register new user with Email & Password
@@ -26,13 +39,13 @@ export const signUpStudent = async (
   isTeacherTarget: boolean = false
 ): Promise<AuthResponse> => {
   try {
-    const isTeacher = isAuthorizedTeacherEmail(email);
+    const isTeacher = await isAuthorizedTeacherEmail(email);
 
     // If attempting to register as a teacher, verify that email is pre-authorized
     if (isTeacherTarget && !isTeacher) {
       return {
         user: null,
-        error: 'Tu correo no está en la lista de profesores aprobados. Debes enviar primero tu solicitud a contacto@tuscursosinmobiliarios.com o hola@tucorretaje.com para recibir autorización.'
+        error: 'Tu correo no está en la lista de profesores aprobados. Debes enviar primero tu solicitud a hola@tucorretaje.com para recibir autorización.'
       };
     }
 
@@ -117,7 +130,7 @@ export const signInStudent = async (email: string, password: string): Promise<Au
         .eq('id', data.user.id)
         .single();
 
-      const isTeacher = isAuthorizedTeacherEmail(data.user.email || email) || profile?.role === 'admin' || profile?.role === 'teacher';
+      const isTeacher = (await isAuthorizedTeacherEmail(data.user.email || email)) || profile?.role === 'admin' || profile?.role === 'teacher';
       const enrolled = profile?.enrolled_courses || ['captacion-exclusivas-ia', 'marketing-inmobiliario-redes'];
       const fullName = profile?.full_name || data.user.user_metadata?.full_name || email.split('@')[0];
 
@@ -173,7 +186,7 @@ export const getActiveStudentSession = async (): Promise<StudentUser | null> => 
       .eq('id', session.user.id)
       .single();
 
-    const isTeacher = isAuthorizedTeacherEmail(session.user.email || '') || profile?.role === 'admin' || profile?.role === 'teacher';
+    const isTeacher = (await isAuthorizedTeacherEmail(session.user.email || '')) || profile?.role === 'admin' || profile?.role === 'teacher';
 
     return {
       id: session.user.id,
