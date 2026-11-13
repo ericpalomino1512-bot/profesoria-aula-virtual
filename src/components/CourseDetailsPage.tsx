@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import type { Course, StudentUser } from '../types/course';
 import { getCourseThumbnail } from '../utils/courseImages';
-import { LessonVideoPlayer } from './LessonVideoPlayer';
+import { CourseWelcomeVideoModal } from './CourseWelcomeVideoModal';
 import { 
   Star, 
   Clock, 
@@ -18,7 +18,6 @@ import {
   FileSpreadsheet, 
   AlertCircle,
   Sparkles,
-  X,
   Tag
 } from 'lucide-react';
 
@@ -523,75 +522,14 @@ export const CourseDetailsPage: React.FC<CourseDetailsPageProps> = ({
         </div>
       </div>
 
-      {/* Course Welcome Video Preview Modal (Udemy style preview) */}
-      {isPreviewModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-sm animate-in fade-in">
-          <div className="relative w-full max-w-3xl bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden space-y-4">
-            
-            {/* Modal Header */}
-            <div className="p-5 pb-3 flex items-center justify-between border-b border-slate-100 dark:border-slate-800">
-              <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-xl bg-violet-100 dark:bg-violet-950/60 text-violet-600 dark:text-violet-400 flex items-center justify-center">
-                  <Play className="w-4 h-4 fill-violet-600 text-violet-600" />
-                </div>
-                <div>
-                  <h3 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white line-clamp-1">
-                    Vista previa del curso: {course.title}
-                  </h3>
-                  <span className="text-xs text-slate-500">Video explicativo con IA y presentación del programa</span>
-                </div>
-              </div>
-
-              <button
-                type="button"
-                onClick={() => setIsPreviewModalOpen(false)}
-                className="p-1 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            {/* Modal Video Player with AI Presentation Slides */}
-            <div className="px-5">
-              {course.units[0]?.lessons[0] && (
-                <LessonVideoPlayer
-                  lesson={course.units[0].lessons[0]}
-                  unitTitle={course.units[0].title}
-                />
-              )}
-            </div>
-
-            {/* Modal Footer Call To Action */}
-            <div className="p-5 pt-3 bg-slate-50/80 dark:bg-slate-800/40 border-t border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
-              <div>
-                <span className="text-xs text-slate-500 block">Acceso completo al aula y certificado:</span>
-                <span className="text-xl font-black text-slate-900 dark:text-white">
-                  {isPaid ? `$${course.price} ${course.currency || 'USD'}` : 'Gratuito (100% Bonificado)'}
-                </span>
-              </div>
-
-              <div className="flex items-center gap-2 w-full sm:w-auto">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setIsPreviewModalOpen(false);
-                    handleEnrollClick();
-                  }}
-                  className={`w-full sm:w-auto px-6 py-3 rounded-2xl font-bold text-xs sm:text-sm shadow-lg flex items-center justify-center gap-2 transition-transform active:scale-95 cursor-pointer ${
-                    isPaid
-                      ? 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-emerald-600/25'
-                      : 'bg-violet-600 hover:bg-violet-700 text-white shadow-violet-500/25'
-                  }`}
-                >
-                  {isPaid ? <Lock className="w-4 h-4" /> : <CheckCircle2 className="w-4 h-4" />}
-                  <span>{isPaid ? `Comprar e Inscribirme Ahora ($${course.price} USD)` : 'Inscribirme Ahora (Gratis)'}</span>
-                </button>
-              </div>
-            </div>
-
-          </div>
-        </div>
-      )}
+      {/* Course Welcome Video Preview Modal */}
+      <CourseWelcomeVideoModal
+        isOpen={isPreviewModalOpen}
+        course={course}
+        isPaid={isPaid}
+        onClose={() => setIsPreviewModalOpen(false)}
+        onEnroll={handleEnrollClick}
+      />
 
     </div>
   );
