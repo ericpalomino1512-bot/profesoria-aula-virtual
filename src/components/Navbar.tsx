@@ -8,7 +8,8 @@ import {
   FolderOpen,
   BookOpen,
   User,
-  ArrowLeft
+  ArrowLeft,
+  ShieldCheck
 } from 'lucide-react';
 import type { Course, AppActiveView, StudentUser } from '../types/course';
 import { importCourseFromFile } from '../utils/courseSharing';
@@ -22,6 +23,7 @@ interface NavbarProps {
   onChangeView: (view: AppActiveView) => void;
   currentUser: StudentUser | null;
   onOpenAuthModal: () => void;
+  onOpenTeacherManager?: () => void;
   onOpenShareModal?: () => void;
   onCourseImported?: (course: Course) => void;
 }
@@ -33,6 +35,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   onChangeView,
   currentUser,
   onOpenAuthModal,
+  onOpenTeacherManager,
   onOpenShareModal,
   onCourseImported,
 }) => {
@@ -169,6 +172,21 @@ export const Navbar: React.FC<NavbarProps> = ({
           >
             <FolderOpen className="w-4 h-4" />
           </button>
+
+          {/* Superadmin button: Manage teachers */}
+          {Boolean(currentUser && (
+            currentUser.email.toLowerCase() === 'ericpalomino1512@gmail.com' ||
+            currentUser.email.toLowerCase() === 'hola@tucorretaje.com'
+          )) && (
+            <button
+              onClick={onOpenTeacherManager}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-xl text-amber-800 dark:text-amber-200 bg-amber-50 hover:bg-amber-100 dark:bg-amber-950/40 dark:hover:bg-amber-900/60 border border-amber-200 dark:border-amber-800/60 transition-colors shadow-xs"
+              title="Panel de Superadmin: Gestionar profesores aprobados"
+            >
+              <ShieldCheck className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
+              <span className="hidden lg:inline">Aprobar Profesores</span>
+            </button>
+          )}
 
           {/* Student Profile / Login button */}
           <button

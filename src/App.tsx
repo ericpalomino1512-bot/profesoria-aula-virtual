@@ -8,6 +8,7 @@ import { ApiKeyModal } from './components/ApiKeyModal';
 import { ShareCourseModal } from './components/ShareCourseModal';
 import { AuthModal } from './components/AuthModal';
 import { ProtectedCreatorGate } from './components/ProtectedCreatorGate';
+import { TeacherManagerModal } from './components/TeacherManagerModal';
 import type { Course, CourseFormData, AppActiveView, StudentUser, CourseProgress } from './types/course';
 import { generateCourseWithGemini, getStoredApiKey } from './services/geminiService';
 import { buildCourseFromDocuments, buildCourseFromTopic } from './services/localCourseEngine';
@@ -73,6 +74,7 @@ export const App: React.FC = () => {
   }, []);
 
   const [isAuthModalOpen, setIsAuthModalOpen] = useState<boolean>(false);
+  const [isTeacherManagerOpen, setIsTeacherManagerOpen] = useState<boolean>(false);
   const [authModalInitialMode, setAuthModalInitialMode] = useState<'login' | 'register' | 'forgot'>('login');
   const [authModalIsTeacherTarget, setAuthModalIsTeacherTarget] = useState<boolean>(false);
 
@@ -310,6 +312,7 @@ export const App: React.FC = () => {
           setAuthModalIsTeacherTarget(false);
           setIsAuthModalOpen(true);
         }}
+        onOpenTeacherManager={() => setIsTeacherManagerOpen(true)}
         onOpenShareModal={() => setIsShareModalOpen(true)}
         onCourseImported={handleCourseImported}
       />
@@ -434,6 +437,15 @@ export const App: React.FC = () => {
           setCurrentUser(null);
         }}
       />
+
+      {/* Teacher Manager Modal (Only for Superadmins) */}
+      {currentUser && (
+        <TeacherManagerModal
+          isOpen={isTeacherManagerOpen}
+          onClose={() => setIsTeacherManagerOpen(false)}
+          adminEmail={currentUser.email}
+        />
+      )}
 
       {/* API Key configuration modal */}
       <ApiKeyModal
