@@ -13,7 +13,8 @@ import {
   Lock,
   Layers,
   Heart,
-  Play
+  Play,
+  Tag
 } from 'lucide-react';
 
 interface CourseCatalogProps {
@@ -24,6 +25,7 @@ interface CourseCatalogProps {
   onSelectCourse: (course: Course, startLessonId?: string) => void;
   onEnrollCourse: (course: Course) => void;
   onOpenCreator?: () => void;
+  onEditPrice?: (course: Course) => void;
 }
 
 export const CourseCatalog: React.FC<CourseCatalogProps> = ({
@@ -33,6 +35,7 @@ export const CourseCatalog: React.FC<CourseCatalogProps> = ({
   onToggleWishlist,
   onSelectCourse,
   onEnrollCourse,
+  onEditPrice,
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('todos');
@@ -153,8 +156,22 @@ export const CourseCatalog: React.FC<CourseCatalogProps> = ({
                   )}
                 </div>
 
-                {/* Price and Wishlist Heart */}
+                {/* Price, Admin Edit and Wishlist Heart */}
                 <div className="absolute top-3 right-3 flex items-center gap-1.5 z-10">
+                  {onEditPrice && (
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onEditPrice(course);
+                      }}
+                      className="p-2 rounded-xl backdrop-blur-xs transition-all shadow-md bg-slate-900/70 hover:bg-amber-600 text-amber-300 hover:text-white cursor-pointer"
+                      title="Ajustar precio oficial (Admin)"
+                    >
+                      <Tag className="w-4 h-4" />
+                    </button>
+                  )}
+
                   {onToggleWishlist && (
                     <button
                       type="button"

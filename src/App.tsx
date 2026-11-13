@@ -12,6 +12,7 @@ import { TeacherManagerModal } from './components/TeacherManagerModal';
 import { UserDashboard } from './components/UserDashboard';
 import { CourseDetailsPage } from './components/CourseDetailsPage';
 import { CheckoutPaymentModal } from './components/CheckoutPaymentModal';
+import { EditCoursePriceModal } from './components/EditCoursePriceModal';
 import type { Course, CourseFormData, AppActiveView, StudentUser, CourseProgress } from './types/course';
 import { generateCourseWithGemini, getStoredApiKey } from './services/geminiService';
 import { buildCourseFromDocuments, buildCourseFromTopic } from './services/localCourseEngine';
@@ -161,6 +162,45 @@ export const App: React.FC = () => {
   const [previewLessonId, setPreviewLessonId] = useState<string | undefined>(undefined);
   const [pendingEnrollCourse, setPendingEnrollCourse] = useState<Course | null>(null);
   const [checkoutCourse, setCheckoutCourse] = useState<Course | null>(null);
+  const [editingPriceCourse, setEditingPriceCourse] = useState<Course | null>(null);
+
+  // Check superadmin permissions
+  const isSuperAdmin = Boolean(
+    currentUser && (
+      currentUser.email.toLowerCase() === 'eric.palomino1512@gmail.com' ||
+      currentUser.email.toLowerCase() === 'ericpalomino1512@gmail.com' ||
+      currentUser.email.toLowerCase() === 'hola@tucorretaje.com' ||
+      currentUser.role === 'admin'
+    )
+  );
+
+  // Save official course price and category set by Superadmin
+  const handleSaveCoursePrice = (courseId: string, newPrice: number, newCategory?: string) => {
+    const catalog = getStoredCatalog();
+    const updated = catalog.map(c => {
+      if (c.id === courseId) {
+        return {
+          ...c,
+          price: newPrice,
+          category: newCategory || c.category,
+          currency: 'USD'
+        };
+      }
+      return c;
+    });
+    localStorage.setItem('profesoria_catalog_courses', JSON.stringify(updated));
+    setCatalogCourses(updated);
+    if (currentCourse && currentCourse.id === courseId) {
+      const updatedCurrent = {
+        ...currentCourse,
+        price: newPrice,
+        category: newCategory || currentCourse.category,
+        currency: 'USD'
+      };
+      setCurrentCourse(updatedCurrent);
+      localStorage.setItem('current_course_data', JSON.stringify(updatedCurrent));
+    }
+  };
 
   // Handle course selection from catalog or list (Opens Udemy Details Landing Page)
   const handleSelectCourse = (course: Course, startLessonId?: string) => {
@@ -438,6 +478,7 @@ export const App: React.FC = () => {
             onSelectCourse={handleSelectCourse}
             onEnrollCourse={handleEnrollCourse}
             onOpenCreator={() => setActiveView('course-creator')}
+            onEditPrice={isSuperAdmin ? (c) => setEditingPriceCourse(c) : undefined}
           />
         )}
 
@@ -470,6 +511,7 @@ export const App: React.FC = () => {
             isEnrolled={enrolledIds.includes(currentCourse.id)}
             currentUser={currentUser}
             isWishlisted={wishlistIds.includes(currentCourse.id)}
+            isAdmin={isSuperAdmin}
             onToggleWishlist={handleToggleWishlist}
             onEnroll={handleEnrollCourse}
             onStartCourse={(c, lessonId) => {
@@ -485,6 +527,7 @@ export const App: React.FC = () => {
               setIsAuthModalOpen(true);
             }}
             onOpenCheckout={(c) => setCheckoutCourse(c)}
+            onEditPrice={isSuperAdmin ? (c) => setEditingPriceCourse(c) : undefined}
           />
         )}
 
@@ -505,6 +548,7 @@ export const App: React.FC = () => {
               loadingStepText={loadingStepText}
               hasApiKey={Boolean(apiKey)}
               onOpenApiKeyModal={() => setIsApiKeyModalOpen(true)}
+              isAdmin={isSuperAdmin}
             />
           ) : (
             <ProtectedCreatorGate
@@ -581,6 +625,16 @@ export const App: React.FC = () => {
             handleEnrollCourse(paidCourse);
             setCheckoutCourse(null);
           }}
+        />
+      )}
+
+      {/* Edit Course Price Modal (Only for Superadmins) */}
+      {editingPriceCourse && (
+        <EditCoursePriceModal
+          isOpen={Boolean(editingPriceCourse)}
+          course={editingPriceCourse}
+          onClose={() => setEditingPriceCourse(null)}
+          onSavePrice={handleSaveCoursePrice}
         />
       )}
 

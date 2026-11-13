@@ -18,7 +18,8 @@ import {
   FileSpreadsheet, 
   AlertCircle,
   Sparkles,
-  X
+  X,
+  Tag
 } from 'lucide-react';
 
 interface CourseDetailsPageProps {
@@ -26,12 +27,14 @@ interface CourseDetailsPageProps {
   isEnrolled: boolean;
   currentUser: StudentUser | null;
   isWishlisted: boolean;
+  isAdmin?: boolean;
   onToggleWishlist: (courseId: string) => void;
   onEnroll: (course: Course) => void;
   onStartCourse: (course: Course, startLessonId?: string) => void;
   onBackToCatalog: () => void;
   onOpenAuthModal: (mode: 'login' | 'register') => void;
   onOpenCheckout?: (course: Course) => void;
+  onEditPrice?: (course: Course) => void;
 }
 
 export const CourseDetailsPage: React.FC<CourseDetailsPageProps> = ({
@@ -39,12 +42,14 @@ export const CourseDetailsPage: React.FC<CourseDetailsPageProps> = ({
   isEnrolled,
   currentUser,
   isWishlisted,
+  isAdmin = false,
   onToggleWishlist,
   onEnroll,
   onStartCourse,
   onBackToCatalog,
   onOpenAuthModal,
   onOpenCheckout,
+  onEditPrice,
 }) => {
   const [expandedUnits, setExpandedUnits] = useState<Record<string, boolean>>(() => {
     // Expand first unit by default
@@ -210,7 +215,7 @@ export const CourseDetailsPage: React.FC<CourseDetailsPageProps> = ({
 
                 {/* Pricing & CTA Body */}
                 <div className="p-6 space-y-5">
-                  <div className="flex items-baseline justify-between">
+                  <div className="flex items-start justify-between gap-2">
                     <div>
                       {isPaid ? (
                         <div className="flex items-baseline gap-2">
@@ -232,6 +237,18 @@ export const CourseDetailsPage: React.FC<CourseDetailsPageProps> = ({
                         </div>
                       )}
                     </div>
+
+                    {isAdmin && onEditPrice && (
+                      <button
+                        type="button"
+                        onClick={() => onEditPrice(course)}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-800/60 hover:bg-amber-100 text-[11px] font-bold cursor-pointer transition-colors shrink-0"
+                        title="Ajustar precio oficial como administrador"
+                      >
+                        <Tag className="w-3.5 h-3.5 text-amber-600" />
+                        <span>Editar Precio</span>
+                      </button>
+                    )}
                   </div>
 
                   {/* Warning if login is needed */}

@@ -26,6 +26,7 @@ interface CourseDesignHomeProps {
   loadingStepText: string;
   hasApiKey: boolean;
   onOpenApiKeyModal: () => void;
+  isAdmin?: boolean;
 }
 
 const PRESET_IDEAS = [
@@ -122,6 +123,7 @@ export const CourseDesignHome: React.FC<CourseDesignHomeProps> = ({
   loadingStepText,
   hasApiKey,
   onOpenApiKeyModal,
+  isAdmin = true,
 }) => {
   const [activeTab, setActiveTab] = useState<'documents' | 'manual'>('documents');
   const [documents, setDocuments] = useState<ParsedDocument[]>([]);
@@ -606,9 +608,16 @@ export const CourseDesignHome: React.FC<CourseDesignHomeProps> = ({
 
             {/* Pricing Model */}
             <div>
-              <label className="block text-sm font-semibold text-slate-800 dark:text-slate-200 mb-2">
-                Precio del Curso
-              </label>
+              <div className="flex items-center justify-between mb-2">
+                <label className="block text-sm font-semibold text-slate-800 dark:text-slate-200">
+                  {isAdmin ? 'Precio Oficial del Curso' : 'Propuesta de Precio'}
+                </label>
+                {!isAdmin && (
+                  <span className="text-[10px] bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 font-bold px-2 py-0.5 rounded-full">
+                    Sujeto a validación admin
+                  </span>
+                )}
+              </div>
               <div className="space-y-2.5">
                 <div className="grid grid-cols-2 gap-2 p-1 bg-slate-100 dark:bg-slate-800 rounded-2xl text-xs font-bold border border-slate-200/60 dark:border-slate-700/60">
                   <button
@@ -620,7 +629,7 @@ export const CourseDesignHome: React.FC<CourseDesignHomeProps> = ({
                         : 'text-slate-500 hover:text-slate-800 dark:text-slate-400'
                     }`}
                   >
-                    Gratuito ($0)
+                    {isAdmin ? 'Gratuito ($0)' : 'Proponer Gratuito'}
                   </button>
 
                   <button
@@ -632,7 +641,7 @@ export const CourseDesignHome: React.FC<CourseDesignHomeProps> = ({
                         : 'text-slate-500 hover:text-slate-800 dark:text-slate-400'
                     }`}
                   >
-                    De Pago (USD)
+                    {isAdmin ? 'De Pago (USD)' : 'Proponer De Pago'}
                   </button>
                 </div>
 
@@ -650,6 +659,12 @@ export const CourseDesignHome: React.FC<CourseDesignHomeProps> = ({
                     />
                     <span className="absolute right-4 top-2.5 text-xs font-bold text-slate-400">USD</span>
                   </div>
+                )}
+
+                {!isAdmin && (
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed bg-amber-50/70 dark:bg-amber-950/30 p-2.5 rounded-xl border border-amber-200/60">
+                    💡 <strong>Coordinación Docente:</strong> El precio final de venta y reparto de honorarios se definirá en coordinación con la administración de TusCursosInmobiliarios antes del lanzamiento oficial.
+                  </p>
                 )}
               </div>
             </div>
