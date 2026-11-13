@@ -27,7 +27,37 @@ export const LessonVideoPlayer: React.FC<LessonVideoPlayerProps> = ({ lesson, un
   const [playbackRate, setPlaybackRate] = useState(1);
   const [progressPercent, setProgressPercent] = useState(0);
   const [activeTab, setActiveTab] = useState<'ai-video' | 'custom-url'>('ai-video');
-  const [customUrl, setCustomUrl] = useState(videoData.customEmbedUrl || '');
+  const [customUrl, setCustomUrl] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem(`profesoria_lesson_video_${lesson.id}`);
+      if (saved) return saved;
+    }
+    return videoData.customEmbedUrl || '';
+  });
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem(`profesoria_lesson_video_${lesson.id}`);
+      if (saved) {
+        setCustomUrl(saved);
+        setActiveTab('custom-url');
+      } else {
+        setCustomUrl(videoData.customEmbedUrl || '');
+        setActiveTab('ai-video');
+      }
+    }
+  }, [lesson.id]);
+
+  const handleUpdateCustomUrl = (val: string) => {
+    setCustomUrl(val);
+    if (typeof window !== 'undefined') {
+      if (val.trim()) {
+        localStorage.setItem(`profesoria_lesson_video_${lesson.id}`, val.trim());
+      } else {
+        localStorage.removeItem(`profesoria_lesson_video_${lesson.id}`);
+      }
+    }
+  };
 
   const synthRef = useRef<SpeechSynthesis | null>(null);
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
@@ -160,47 +190,51 @@ export const LessonVideoPlayer: React.FC<LessonVideoPlayerProps> = ({ lesson, un
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-3 border-b border-slate-100 dark:border-slate-800">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-2xl bg-violet-600 text-white flex items-center justify-center shadow-md shadow-violet-500/20">
+          <div className="w-10 h-10 rounded-2xl bg-violet-600 text-white flex items-center justify-center shadow-md shadow-violet-500/20 shrink-0">
             <Video className="w-5 h-5" />
           </div>
           <div>
             <div className="flex items-center gap-2">
               <span className="text-[11px] font-bold uppercase tracking-wider text-violet-600 dark:text-violet-400">
-                Google Video Overview IA
+                Video de la Lección
               </span>
-              <span className="text-[10px] px-2 py-0.5 rounded-full font-bold bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300">
-                Sintetizado
+              <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
+                activeTab === 'ai-video'
+                  ? 'bg-violet-100 text-violet-800 dark:bg-violet-950/60 dark:text-violet-300'
+                  : 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300'
+              }`}>
+                {activeTab === 'ai-video' ? 'Generado con IA' : 'Video del Profesor'}
               </span>
             </div>
-            <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">
-              Video Instructivo de la Lección {lesson.lessonNumber}
+            <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white line-clamp-1">
+              {lesson.lessonNumber}. {lesson.title}
             </h3>
           </div>
         </div>
 
         {/* Tab switch: AI Video vs Custom Embed */}
-        <div className="flex rounded-xl bg-slate-100 dark:bg-slate-800 p-1 text-xs">
+        <div className="flex rounded-xl bg-slate-100 dark:bg-slate-800 p-1 text-xs shrink-0">
           <button
             type="button"
             onClick={() => setActiveTab('ai-video')}
-            className={`px-3 py-1.5 rounded-lg font-semibold transition-all ${
+            className={`px-3 py-1.5 rounded-lg font-semibold transition-all cursor-pointer ${
               activeTab === 'ai-video'
                 ? 'bg-white dark:bg-slate-900 text-violet-600 dark:text-violet-400 shadow-xs'
                 : 'text-slate-600 dark:text-slate-400'
             }`}
           >
-            Video IA Narrado
+            Video con IA (Generado)
           </button>
           <button
             type="button"
             onClick={() => setActiveTab('custom-url')}
-            className={`px-3 py-1.5 rounded-lg font-semibold transition-all ${
+            className={`px-3 py-1.5 rounded-lg font-semibold transition-all cursor-pointer ${
               activeTab === 'custom-url'
                 ? 'bg-white dark:bg-slate-900 text-violet-600 dark:text-violet-400 shadow-xs'
                 : 'text-slate-600 dark:text-slate-400'
             }`}
           >
-            Vincular Video Externo
+            Video del Profesor (Vincular)
           </button>
         </div>
       </div>
@@ -368,13 +402,13 @@ export const LessonVideoPlayer: React.FC<LessonVideoPlayerProps> = ({ lesson, un
               <input
                 type="url"
                 value={customUrl}
-                onChange={(e) => setCustomUrl(e.target.value)}
-                placeholder="https://www.youtube.com/watch?v=... o enlace de Loom / Drive"
+                onChange={(e) => handleUpdateCustomUrl(e.target.value)}
+                placeholder="https://www.youtube.com/watch?v=... o enlace de Vimeo / Loom / Drive"
                 className="flex-1 px-3.5 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500"
               />
             </div>
             <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1">
-              Puedes pegar un video grabado por ti o un recurso oficial complementario para esta lección.
+              Como profesor puedes vincular tu propio video grabado (YouTube, Vimeo, Loom o Google Drive) para esta lección específica, o volver a la pestaña de Video con IA en cualquier momento.
             </p>
           </div>
 
