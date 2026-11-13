@@ -4,6 +4,7 @@ import { ShieldAlert, Lock, ArrowLeft, LogIn } from 'lucide-react';
 interface ProtectedCreatorGateProps {
   onBackToCatalog: () => void;
   onOpenLogin: () => void;
+  onOpenRegisterTeacher?: () => void;
   isLoggedIn: boolean;
   currentUserEmail?: string;
 }
@@ -11,6 +12,7 @@ interface ProtectedCreatorGateProps {
 export const ProtectedCreatorGate: React.FC<ProtectedCreatorGateProps> = ({
   onBackToCatalog,
   onOpenLogin,
+  onOpenRegisterTeacher,
   isLoggedIn,
   currentUserEmail,
 }) => {
@@ -58,6 +60,15 @@ export const ProtectedCreatorGate: React.FC<ProtectedCreatorGateProps> = ({
           <LogIn className="w-4 h-4" />
           <span>{isLoggedIn ? 'Cambiar a cuenta de Profesor' : 'Iniciar Sesión como Profesor'}</span>
         </button>
+
+        {!isLoggedIn && onOpenRegisterTeacher && (
+          <button
+            onClick={onOpenRegisterTeacher}
+            className="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold shadow-md shadow-indigo-500/20 flex items-center gap-2 transition-transform active:scale-95"
+          >
+            <span>Registrarme como Profesor</span>
+          </button>
+        )}
 
         <a
           href="mailto:contacto@tuscursosinmobiliarios.com?subject=Solicitud%20de%20Acceso%20Docente%20-%20TusCursosInmobiliarios&body=Hola%2C%20deseo%20solicitar%20acceso%20como%20profesor%20para%20publicar%20un%20curso%20en%20el%20Campus%20Virtual.%0A%0ANombre%20completo%3A%0ACorreo%3A%0ATema%20del%20curso%3A"

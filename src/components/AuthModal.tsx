@@ -10,6 +10,8 @@ import { User, Mail, Lock, X, Check, LogIn, UserPlus, KeyRound, AlertCircle, Loa
 interface AuthModalProps {
   isOpen: boolean;
   currentUser: StudentUser | null;
+  initialMode?: 'login' | 'register' | 'forgot';
+  isTeacherTarget?: boolean;
   onClose: () => void;
   onLogin: (user: StudentUser) => void;
   onLogout: () => void;
@@ -18,11 +20,20 @@ interface AuthModalProps {
 export const AuthModal: React.FC<AuthModalProps> = ({
   isOpen,
   currentUser,
+  initialMode = 'login',
+  isTeacherTarget = false,
   onClose,
   onLogin,
   onLogout,
 }) => {
-  const [mode, setMode] = useState<'login' | 'register' | 'forgot'>('login');
+  const [mode, setMode] = useState<'login' | 'register' | 'forgot'>(initialMode);
+
+  // Sync mode when modal opens
+  React.useEffect(() => {
+    if (isOpen) {
+      setMode(initialMode);
+    }
+  }, [isOpen, initialMode]);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -84,15 +95,19 @@ export const AuthModal: React.FC<AuthModalProps> = ({
             <div>
               <h3 className="text-base font-bold text-slate-900 dark:text-white">
                 {currentUser 
-                  ? 'Mi Perfil de Alumno' 
+                  ? (currentUser.role === 'admin' || currentUser.role === 'teacher' ? 'Perfil de Profesor / Admin' : 'Mi Perfil de Alumno')
                   : mode === 'register' 
-                    ? 'Crear Cuenta de Alumno' 
+                    ? (isTeacherTarget ? 'Registro de Profesor Autorizado' : 'Crear Cuenta en el Campus') 
                     : mode === 'forgot'
                       ? 'Recuperar Contraseña'
-                      : 'Iniciar Sesión'}
+                      : (isTeacherTarget ? 'Iniciar Sesión como Profesor' : 'Iniciar Sesión')}
               </h3>
               <p className="text-xs text-slate-500 dark:text-slate-400">
-                {currentUser ? 'Gestión de tu cuenta en la nube' : 'Accede a tus cursos y guarda tu progreso'}
+                {currentUser 
+                  ? 'Gestión de tu cuenta en la nube' 
+                  : isTeacherTarget 
+                    ? 'Acceso exclusivo con correo docente autorizado'
+                    : 'Accede a tus cursos y guarda tu progreso'}
               </p>
             </div>
           </div>
@@ -164,7 +179,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                     required
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    placeholder="Ej. Juan Pérez"
+                    placeholder={isTeacherTarget ? "Ej. Prof. Eric Palomino" : "Ej. Juan Pérez"}
                     className="w-full pl-9 pr-3 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 focus:outline-hidden focus:ring-2 focus:ring-violet-500"
                   />
                 </div>
@@ -173,7 +188,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
             <div>
               <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
-                Correo electrónico
+                Correo electrónico {isTeacherTarget && <span className="text-violet-600 dark:text-violet-400 font-semibold">(correo autorizado)</span>}
               </label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
@@ -182,7 +197,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="alumno@ejemplo.com"
+                  placeholder={isTeacherTarget ? "tu-correo-docente@ejemplo.com" : "alumno@ejemplo.com"}
                   className="w-full pl-9 pr-3 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 focus:outline-hidden focus:ring-2 focus:ring-violet-500"
                 />
               </div>
@@ -231,7 +246,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               ) : mode === 'register' ? (
                 <>
                   <UserPlus className="w-4 h-4" />
-                  <span>Crear mi cuenta segura</span>
+                  <span>{isTeacherTarget ? 'Registrarme como Profesor' : 'Crear mi cuenta segura'}</span>
                 </>
               ) : mode === 'forgot' ? (
                 <>
@@ -241,7 +256,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               ) : (
                 <>
                   <LogIn className="w-4 h-4" />
-                  <span>Entrar al Campus</span>
+                  <span>{isTeacherTarget ? 'Entrar al Panel de Profesor' : 'Entrar al Campus'}</span>
                 </>
               )}
             </button>

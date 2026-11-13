@@ -73,6 +73,8 @@ export const App: React.FC = () => {
   }, []);
 
   const [isAuthModalOpen, setIsAuthModalOpen] = useState<boolean>(false);
+  const [authModalInitialMode, setAuthModalInitialMode] = useState<'login' | 'register' | 'forgot'>('login');
+  const [authModalIsTeacherTarget, setAuthModalIsTeacherTarget] = useState<boolean>(false);
 
   // Catalog & Enrollment State
   const [catalogCourses, setCatalogCourses] = useState<Course[]>(() => getStoredCatalog());
@@ -303,7 +305,11 @@ export const App: React.FC = () => {
           window.scrollTo({ top: 0, behavior: 'smooth' });
         }}
         currentUser={currentUser}
-        onOpenAuthModal={() => setIsAuthModalOpen(true)}
+        onOpenAuthModal={() => {
+          setAuthModalInitialMode('login');
+          setAuthModalIsTeacherTarget(false);
+          setIsAuthModalOpen(true);
+        }}
         onOpenShareModal={() => setIsShareModalOpen(true)}
         onCourseImported={handleCourseImported}
       />
@@ -389,7 +395,16 @@ export const App: React.FC = () => {
               isLoggedIn={Boolean(currentUser)}
               currentUserEmail={currentUser?.email}
               onBackToCatalog={() => setActiveView('catalog')}
-              onOpenLogin={() => setIsAuthModalOpen(true)}
+              onOpenLogin={() => {
+                setAuthModalInitialMode('login');
+                setAuthModalIsTeacherTarget(true);
+                setIsAuthModalOpen(true);
+              }}
+              onOpenRegisterTeacher={() => {
+                setAuthModalInitialMode('register');
+                setAuthModalIsTeacherTarget(true);
+                setIsAuthModalOpen(true);
+              }}
             />
           )
         )}
@@ -403,6 +418,8 @@ export const App: React.FC = () => {
       <AuthModal
         isOpen={isAuthModalOpen}
         currentUser={currentUser}
+        initialMode={authModalInitialMode}
+        isTeacherTarget={authModalIsTeacherTarget}
         onClose={() => setIsAuthModalOpen(false)}
         onLogin={(user) => {
           setCurrentUser(user);
