@@ -378,9 +378,11 @@ export const App: React.FC = () => {
         )}
 
         {activeView === 'course-creator' && (
-          // Admin / Professor Guard: Only ericpalomino1512@gmail.com, role admin/teacher, or authorized accounts
+          // Admin / Professor Guard: Only eric.palomino1512@gmail.com, ericpalomino1512@gmail.com, hola@tucorretaje.com, role admin/teacher, or authorized accounts
           Boolean(currentUser && (
+            currentUser.email.toLowerCase() === 'eric.palomino1512@gmail.com' ||
             currentUser.email.toLowerCase() === 'ericpalomino1512@gmail.com' ||
+            currentUser.email.toLowerCase() === 'hola@tucorretaje.com' ||
             currentUser.email.toLowerCase().includes('admin') ||
             currentUser.role === 'admin' ||
             currentUser.role === 'teacher'

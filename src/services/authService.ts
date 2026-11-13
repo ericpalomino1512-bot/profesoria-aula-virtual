@@ -12,6 +12,7 @@ export const isAuthorizedTeacherEmail = async (email: string): Promise<boolean> 
   
   // Superadmins
   const superadmins = [
+    'eric.palomino1512@gmail.com',
     'ericpalomino1512@gmail.com',
     'hola@tucorretaje.com'
   ];

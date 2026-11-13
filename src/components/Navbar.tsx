@@ -175,6 +175,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
           {/* Superadmin button: Manage teachers */}
           {Boolean(currentUser && (
+            currentUser.email.toLowerCase() === 'eric.palomino1512@gmail.com' ||
             currentUser.email.toLowerCase() === 'ericpalomino1512@gmail.com' ||
             currentUser.email.toLowerCase() === 'hola@tucorretaje.com'
           )) && (
