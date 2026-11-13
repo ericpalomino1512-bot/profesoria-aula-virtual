@@ -51,12 +51,12 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
     try {
       if (mode === 'register') {
-        const res = await signUpStudent(email.trim(), password, name.trim());
+        const res = await signUpStudent(email.trim(), password, name.trim(), isTeacherTarget);
         if (res.error) {
           setErrorMessage(res.error);
         } else if (res.user) {
           onLogin(res.user);
-          setSuccessMessage('¡Cuenta creada con éxito! Bienvenido al Campus.');
+          setSuccessMessage(isTeacherTarget ? '¡Cuenta docente verificada con éxito! Bienvenido.' : '¡Cuenta creada con éxito! Bienvenido al Campus.');
           setTimeout(() => onClose(), 1200);
         }
       } else if (mode === 'login') {

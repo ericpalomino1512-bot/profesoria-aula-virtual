@@ -18,10 +18,23 @@ export const isAuthorizedTeacherEmail = (email: string): boolean => {
   return authorized.includes(normalized) || normalized.startsWith('admin@');
 };
 
-// Register new student with Email & Password
-export const signUpStudent = async (email: string, password: string, name: string): Promise<AuthResponse> => {
+// Register new user with Email & Password
+export const signUpStudent = async (
+  email: string, 
+  password: string, 
+  name: string,
+  isTeacherTarget: boolean = false
+): Promise<AuthResponse> => {
   try {
     const isTeacher = isAuthorizedTeacherEmail(email);
+
+    // If attempting to register as a teacher, verify that email is pre-authorized
+    if (isTeacherTarget && !isTeacher) {
+      return {
+        user: null,
+        error: 'Tu correo no está en la lista de profesores aprobados. Debes enviar primero tu solicitud a contacto@tuscursosinmobiliarios.com o hola@tucorretaje.com para recibir autorización.'
+      };
+    }
 
     const { data, error } = await supabase.auth.signUp({
       email,
