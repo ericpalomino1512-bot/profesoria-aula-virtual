@@ -14,6 +14,8 @@ export interface CourseFormData {
   availableTime: string;
   preferredFormat: PreferredFormat;
   apiKey?: string;
+  price?: number;
+  category?: string;
 }
 
 export interface QuizQuestion {

@@ -99,6 +99,10 @@ export const CourseView: React.FC<CourseViewProps> = ({
   };
 
   const handleToggleCompleteLesson = () => {
+    if (!isEnrolled) {
+      if (onEnroll) onEnroll(course);
+      return;
+    }
     if (!currentFlatItem) return;
     const lessonId = currentFlatItem.lesson.id;
     const isCompleted = progress.completedLessonIds.includes(lessonId);

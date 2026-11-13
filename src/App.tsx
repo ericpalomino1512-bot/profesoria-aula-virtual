@@ -11,6 +11,7 @@ import { ProtectedCreatorGate } from './components/ProtectedCreatorGate';
 import { TeacherManagerModal } from './components/TeacherManagerModal';
 import { UserDashboard } from './components/UserDashboard';
 import { CourseDetailsPage } from './components/CourseDetailsPage';
+import { CheckoutPaymentModal } from './components/CheckoutPaymentModal';
 import type { Course, CourseFormData, AppActiveView, StudentUser, CourseProgress } from './types/course';
 import { generateCourseWithGemini, getStoredApiKey } from './services/geminiService';
 import { buildCourseFromDocuments, buildCourseFromTopic } from './services/localCourseEngine';
@@ -159,6 +160,7 @@ export const App: React.FC = () => {
   // Selected preview lesson ID and pending enroll course for post-login auto-enrollment
   const [previewLessonId, setPreviewLessonId] = useState<string | undefined>(undefined);
   const [pendingEnrollCourse, setPendingEnrollCourse] = useState<Course | null>(null);
+  const [checkoutCourse, setCheckoutCourse] = useState<Course | null>(null);
 
   // Handle course selection from catalog or list (Opens Udemy Details Landing Page)
   const handleSelectCourse = (course: Course, startLessonId?: string) => {
@@ -237,6 +239,11 @@ export const App: React.FC = () => {
         course = buildCourseFromTopic(formData);
       }
 
+      // Apply price, category and currency set by the teacher
+      course.price = formData.price !== undefined ? formData.price : 0;
+      if (formData.category) course.category = formData.category;
+      course.currency = 'USD';
+
       // Add to catalog & enroll author
       saveCatalogCourse(course);
       enrollInCourse(course.id);
@@ -252,6 +259,9 @@ export const App: React.FC = () => {
       try {
         setLoadingStepText('Generando con el motor instruccional local...');
         const localCourse = buildCourseFromTopic(formData);
+        localCourse.price = formData.price !== undefined ? formData.price : 0;
+        if (formData.category) localCourse.category = formData.category;
+        localCourse.currency = 'USD';
         saveCatalogCourse(localCourse);
         enrollInCourse(localCourse.id);
         setCatalogCourses(getStoredCatalog());
@@ -298,6 +308,11 @@ export const App: React.FC = () => {
         course = buildCourseFromDocuments(docs, formData);
       }
 
+      // Apply price, category and currency set by the teacher
+      course.price = formData.price !== undefined ? formData.price : 0;
+      if (formData.category) course.category = formData.category;
+      course.currency = 'USD';
+
       // Add to catalog & enroll author
       saveCatalogCourse(course);
       enrollInCourse(course.id);
@@ -313,6 +328,9 @@ export const App: React.FC = () => {
       try {
         setLoadingStepText('Recuperando estructura mediante motor instruccional local...');
         const fallbackCourse = buildCourseFromDocuments(docs, formData);
+        fallbackCourse.price = formData.price !== undefined ? formData.price : 0;
+        if (formData.category) fallbackCourse.category = formData.category;
+        fallbackCourse.currency = 'USD';
         saveCatalogCourse(fallbackCourse);
         enrollInCourse(fallbackCourse.id);
         setCatalogCourses(getStoredCatalog());
@@ -466,6 +484,7 @@ export const App: React.FC = () => {
               setAuthModalIsTeacherTarget(false);
               setIsAuthModalOpen(true);
             }}
+            onOpenCheckout={(c) => setCheckoutCourse(c)}
           />
         )}
 
@@ -548,6 +567,20 @@ export const App: React.FC = () => {
           isOpen={isTeacherManagerOpen}
           onClose={() => setIsTeacherManagerOpen(false)}
           adminEmail={currentUser.email}
+        />
+      )}
+
+      {/* Checkout / Payment Modal for Paid Courses */}
+      {checkoutCourse && (
+        <CheckoutPaymentModal
+          isOpen={Boolean(checkoutCourse)}
+          course={checkoutCourse}
+          currentUser={currentUser}
+          onClose={() => setCheckoutCourse(null)}
+          onConfirmPayment={(paidCourse) => {
+            handleEnrollCourse(paidCourse);
+            setCheckoutCourse(null);
+          }}
         />
       )}
 

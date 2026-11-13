@@ -13,7 +13,7 @@ import {
   Lock,
   Layers,
   Heart,
-  PlayCircle
+  Play
 } from 'lucide-react';
 
 interface CourseCatalogProps {
@@ -176,8 +176,8 @@ export const CourseCatalog: React.FC<CourseCatalogProps> = ({
 
                 {/* Hover Play icon button */}
                 <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-slate-950/30 backdrop-blur-[1px]">
-                  <div className="w-12 h-12 rounded-full bg-white/90 text-violet-600 flex items-center justify-center shadow-xl transform group-hover:scale-110 transition-transform">
-                    <PlayCircle className="w-6 h-6 fill-violet-600 text-white ml-0.5" />
+                  <div className="w-12 h-12 rounded-full bg-white text-violet-600 flex items-center justify-center shadow-xl transform group-hover:scale-110 transition-transform">
+                    <Play className="w-5 h-5 fill-violet-600 text-violet-600 ml-0.5" />
                   </div>
                 </div>
 

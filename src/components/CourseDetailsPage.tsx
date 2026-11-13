@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import type { Course, StudentUser } from '../types/course';
 import { getCourseThumbnail } from '../utils/courseImages';
+import { LessonVideoPlayer } from './LessonVideoPlayer';
 import { 
   Star, 
   Clock, 
   Globe, 
   Award, 
   CheckCircle2, 
-  PlayCircle, 
+  Play, 
   Lock, 
   Heart, 
   ArrowLeft, 
@@ -16,7 +17,8 @@ import {
   ChevronUp, 
   FileSpreadsheet, 
   AlertCircle,
-  Sparkles
+  Sparkles,
+  X
 } from 'lucide-react';
 
 interface CourseDetailsPageProps {
@@ -29,6 +31,7 @@ interface CourseDetailsPageProps {
   onStartCourse: (course: Course, startLessonId?: string) => void;
   onBackToCatalog: () => void;
   onOpenAuthModal: (mode: 'login' | 'register') => void;
+  onOpenCheckout?: (course: Course) => void;
 }
 
 export const CourseDetailsPage: React.FC<CourseDetailsPageProps> = ({
@@ -41,6 +44,7 @@ export const CourseDetailsPage: React.FC<CourseDetailsPageProps> = ({
   onStartCourse,
   onBackToCatalog,
   onOpenAuthModal,
+  onOpenCheckout,
 }) => {
   const [expandedUnits, setExpandedUnits] = useState<Record<string, boolean>>(() => {
     // Expand first unit by default
@@ -51,6 +55,7 @@ export const CourseDetailsPage: React.FC<CourseDetailsPageProps> = ({
     return map;
   });
 
+  const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false);
   const [enrollWarning, setEnrollWarning] = useState<string | null>(null);
 
   const totalLessons = course.units.reduce((acc, u) => acc + u.lessons.length, 0);
@@ -76,7 +81,10 @@ export const CourseDetailsPage: React.FC<CourseDetailsPageProps> = ({
     }
 
     if (isPaid) {
-      setEnrollWarning('Este es un programa premium. Tu cuenta está registrada; procesaremos la inscripción de inmediato.');
+      if (onOpenCheckout) {
+        onOpenCheckout(course);
+        return;
+      }
     }
 
     onEnroll(course);
@@ -187,11 +195,12 @@ export const CourseDetailsPage: React.FC<CourseDetailsPageProps> = ({
                   />
                   <div className="absolute inset-0 bg-slate-950/40 group-hover:bg-slate-950/20 transition-colors flex flex-col items-center justify-center p-4">
                     <button
-                      onClick={() => handlePreviewLesson(course.units[0]?.lessons[0]?.id || '')}
-                      className="w-14 h-14 rounded-full bg-white/90 hover:bg-white text-violet-600 flex items-center justify-center shadow-xl transform group-hover:scale-110 transition-transform cursor-pointer"
-                      title="Ver vista previa de la lección 1"
+                      type="button"
+                      onClick={() => setIsPreviewModalOpen(true)}
+                      className="w-14 h-14 rounded-full bg-white hover:bg-violet-50 text-violet-600 flex items-center justify-center shadow-xl transform group-hover:scale-110 transition-transform cursor-pointer"
+                      title="Ver video de bienvenida y presentación"
                     >
-                      <PlayCircle className="w-8 h-8 fill-violet-600 text-white ml-0.5" />
+                      <Play className="w-6 h-6 fill-violet-600 text-violet-600 ml-1" />
                     </button>
                     <span className="mt-2 text-xs font-bold text-white drop-shadow-md">
                       Vista previa del curso
@@ -240,7 +249,7 @@ export const CourseDetailsPage: React.FC<CourseDetailsPageProps> = ({
                         onClick={() => onStartCourse(course)}
                         className="w-full py-3.5 px-4 rounded-2xl bg-violet-600 hover:bg-violet-700 text-white font-bold text-sm flex items-center justify-center gap-2 shadow-lg shadow-violet-500/25 transition-transform active:scale-95 cursor-pointer"
                       >
-                        <PlayCircle className="w-5 h-5" />
+                        <Play className="w-4 h-4 fill-white" />
                         <span>Ir al Aula Virtual / Continuar</span>
                       </button>
                     ) : (
@@ -411,7 +420,7 @@ export const CourseDetailsPage: React.FC<CourseDetailsPageProps> = ({
                                   {isLocked ? (
                                     <Lock className="w-4 h-4 text-slate-400 shrink-0" />
                                   ) : (
-                                    <PlayCircle className="w-4 h-4 text-violet-600 dark:text-violet-400 shrink-0" />
+                                    <Play className="w-3.5 h-3.5 fill-violet-600 text-violet-600 shrink-0" />
                                   )}
                                   
                                   <div className="min-w-0">
@@ -496,6 +505,76 @@ export const CourseDetailsPage: React.FC<CourseDetailsPageProps> = ({
 
         </div>
       </div>
+
+      {/* Course Welcome Video Preview Modal (Udemy style preview) */}
+      {isPreviewModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-sm animate-in fade-in">
+          <div className="relative w-full max-w-3xl bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden space-y-4">
+            
+            {/* Modal Header */}
+            <div className="p-5 pb-3 flex items-center justify-between border-b border-slate-100 dark:border-slate-800">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-xl bg-violet-100 dark:bg-violet-950/60 text-violet-600 dark:text-violet-400 flex items-center justify-center">
+                  <Play className="w-4 h-4 fill-violet-600 text-violet-600" />
+                </div>
+                <div>
+                  <h3 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white line-clamp-1">
+                    Vista previa del curso: {course.title}
+                  </h3>
+                  <span className="text-xs text-slate-500">Video explicativo con IA y presentación del programa</span>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setIsPreviewModalOpen(false)}
+                className="p-1 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Modal Video Player with AI Presentation Slides */}
+            <div className="px-5">
+              {course.units[0]?.lessons[0] && (
+                <LessonVideoPlayer
+                  lesson={course.units[0].lessons[0]}
+                  unitTitle={course.units[0].title}
+                />
+              )}
+            </div>
+
+            {/* Modal Footer Call To Action */}
+            <div className="p-5 pt-3 bg-slate-50/80 dark:bg-slate-800/40 border-t border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div>
+                <span className="text-xs text-slate-500 block">Acceso completo al aula y certificado:</span>
+                <span className="text-xl font-black text-slate-900 dark:text-white">
+                  {isPaid ? `$${course.price} ${course.currency || 'USD'}` : 'Gratuito (100% Bonificado)'}
+                </span>
+              </div>
+
+              <div className="flex items-center gap-2 w-full sm:w-auto">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsPreviewModalOpen(false);
+                    handleEnrollClick();
+                  }}
+                  className={`w-full sm:w-auto px-6 py-3 rounded-2xl font-bold text-xs sm:text-sm shadow-lg flex items-center justify-center gap-2 transition-transform active:scale-95 cursor-pointer ${
+                    isPaid
+                      ? 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-emerald-600/25'
+                      : 'bg-violet-600 hover:bg-violet-700 text-white shadow-violet-500/25'
+                  }`}
+                >
+                  {isPaid ? <Lock className="w-4 h-4" /> : <CheckCircle2 className="w-4 h-4" />}
+                  <span>{isPaid ? `Comprar e Inscribirme Ahora ($${course.price} USD)` : 'Inscribirme Ahora (Gratis)'}</span>
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      )}
 
     </div>
   );

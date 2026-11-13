@@ -147,6 +147,11 @@ export const CourseDesignHome: React.FC<CourseDesignHomeProps> = ({
   const [mainGoal, setMainGoal] = useState('Dominar los conceptos del temario y resolver casos reales');
   const [preferredFormat, setPreferredFormat] = useState<PreferredFormat>('Lecturas + ejercicios');
 
+  // Pricing & Category state (Teachers can define price and category)
+  const [isPaid, setIsPaid] = useState<boolean>(false);
+  const [price, setPrice] = useState<number>(49);
+  const [category, setCategory] = useState<string>('Inmobiliario y Ventas');
+
   // When Level changes, update available profiles to match that level
   const handleLevelChange = (newLevel: CourseLevel) => {
     setLevel(newLevel);
@@ -214,7 +219,9 @@ export const CourseDesignHome: React.FC<CourseDesignHomeProps> = ({
       studentProfile: getEffectiveStudentProfile(),
       mainGoal: mainGoal.trim() || 'Comprender los conceptos esenciales del tema',
       availableTime: getEffectiveDuration(),
-      preferredFormat
+      preferredFormat,
+      price: isPaid ? (Number(price) || 49) : 0,
+      category
     };
 
     if (activeTab === 'documents' && documents.length > 0) {
@@ -569,6 +576,82 @@ export const CourseDesignHome: React.FC<CourseDesignHomeProps> = ({
               <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-2">
                 Adapta el ritmo pedagógico y el balance entre teoría y ejercicios.
               </p>
+            </div>
+          </div>
+
+          {/* Pricing & Category Settings (Teacher controls course monetization) */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 pt-3 border-t border-slate-100 dark:border-slate-800">
+            {/* Category */}
+            <div>
+              <label className="block text-sm font-semibold text-slate-800 dark:text-slate-200 mb-2">
+                Categoría del Curso
+              </label>
+              <select
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+                className="w-full px-4 py-3 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/60 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500 text-sm font-medium"
+              >
+                <option value="Inmobiliario y Ventas">Inmobiliario y Ventas</option>
+                <option value="Marketing y Redes">Marketing y Redes</option>
+                <option value="Captación y Exclusivas">Captación y Exclusivas</option>
+                <option value="Valoración y Finanzas">Valoración y Finanzas</option>
+                <option value="Legal y Notarial">Legal y Notarial</option>
+                <option value="Ciencias y Bachillerato">Ciencias y Bachillerato</option>
+                <option value="General">General</option>
+              </select>
+              <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1.5">
+                Organiza el catálogo para los alumnos interesados.
+              </p>
+            </div>
+
+            {/* Pricing Model */}
+            <div>
+              <label className="block text-sm font-semibold text-slate-800 dark:text-slate-200 mb-2">
+                Precio del Curso
+              </label>
+              <div className="space-y-2.5">
+                <div className="grid grid-cols-2 gap-2 p-1 bg-slate-100 dark:bg-slate-800 rounded-2xl text-xs font-bold border border-slate-200/60 dark:border-slate-700/60">
+                  <button
+                    type="button"
+                    onClick={() => setIsPaid(false)}
+                    className={`py-2 px-3 rounded-xl transition-all cursor-pointer ${
+                      !isPaid
+                        ? 'bg-white dark:bg-slate-900 text-emerald-600 shadow-xs'
+                        : 'text-slate-500 hover:text-slate-800 dark:text-slate-400'
+                    }`}
+                  >
+                    Gratuito ($0)
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setIsPaid(true)}
+                    className={`py-2 px-3 rounded-xl transition-all cursor-pointer ${
+                      isPaid
+                        ? 'bg-emerald-600 text-white shadow-xs'
+                        : 'text-slate-500 hover:text-slate-800 dark:text-slate-400'
+                    }`}
+                  >
+                    De Pago (USD)
+                  </button>
+                </div>
+
+                {isPaid && (
+                  <div className="relative animate-in fade-in">
+                    <span className="absolute left-4 top-2.5 text-slate-400 text-sm font-bold">$</span>
+                    <input
+                      type="number"
+                      min="1"
+                      max="999"
+                      value={price}
+                      onChange={(e) => setPrice(Number(e.target.value))}
+                      placeholder="Ej. 49"
+                      className="w-full pl-8 pr-16 py-2 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-bold text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                    />
+                    <span className="absolute right-4 top-2.5 text-xs font-bold text-slate-400">USD</span>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
