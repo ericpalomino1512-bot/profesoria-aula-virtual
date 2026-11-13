@@ -356,10 +356,7 @@ export const getEnrolledCourseIds = (): string[] => {
       return JSON.parse(stored);
     } catch (e) {}
   }
-  // By default, demo course is enrolled for testing
-  const initial = ['quimica-organica-ebau'];
-  localStorage.setItem('student_enrolled_courses', JSON.stringify(initial));
-  return initial;
+  return [];
 };
 
 export const enrollInCourse = (courseId: string): void => {

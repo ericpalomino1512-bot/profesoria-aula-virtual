@@ -1,5 +1,6 @@
 import React from 'react';
 import type { StudentUser, Course, CourseProgress } from '../types/course';
+import { getCourseThumbnail } from '../utils/courseImages';
 import { 
   GraduationCap, 
   BookOpen, 
@@ -138,32 +139,44 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({
             {teacherCourses.map((c) => (
               <div
                 key={c.id}
-                className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-3 shadow-xs hover:border-violet-300 transition-colors"
+                className="rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 overflow-hidden shadow-xs hover:border-violet-300 transition-colors flex flex-col justify-between"
               >
-                <div className="flex items-center justify-between">
-                  <span className="text-[11px] font-bold px-2 py-0.5 rounded-md bg-violet-100 dark:bg-violet-950/60 text-violet-700 dark:text-violet-300">
-                    {c.level}
-                  </span>
-                  <span className="text-xs font-bold text-emerald-600">
-                    {c.price ? `$${c.price} USD` : 'Gratuito'}
-                  </span>
+                <div className="relative aspect-video w-full overflow-hidden bg-slate-950">
+                  <img 
+                    src={getCourseThumbnail(c)} 
+                    alt={c.title} 
+                    className="w-full h-full object-cover" 
+                  />
+                  <div className="absolute top-2.5 left-2.5">
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-slate-900/80 text-violet-300 backdrop-blur-xs">
+                      {c.level}
+                    </span>
+                  </div>
+                  <div className="absolute top-2.5 right-2.5">
+                    <span className="text-xs font-bold text-white bg-emerald-600 px-2 py-0.5 rounded-md shadow-xs">
+                      {c.price ? `$${c.price} USD` : 'Gratuito'}
+                    </span>
+                  </div>
                 </div>
 
-                <h3 className="text-sm font-bold text-slate-900 dark:text-white line-clamp-2">
-                  {c.title}
-                </h3>
+                <div className="p-5 space-y-3 flex-1 flex flex-col justify-between">
+                  <div className="space-y-1.5">
+                    <h3 className="text-sm font-bold text-slate-900 dark:text-white line-clamp-2">
+                      {c.title}
+                    </h3>
+                    <p className="text-[11px] text-slate-500 line-clamp-2">
+                      {c.subtitle}
+                    </p>
+                  </div>
 
-                <p className="text-[11px] text-slate-500 line-clamp-2">
-                  {c.subtitle}
-                </p>
-
-                <div className="pt-2 flex items-center gap-2 border-t border-slate-100 dark:border-slate-800">
-                  <button
-                    onClick={() => onSelectCourse(c)}
-                    className="w-full py-2 px-3 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-violet-600 hover:text-white text-slate-700 dark:text-slate-200 text-xs font-bold transition-all text-center"
-                  >
-                    Ver en el Aula Virtual
-                  </button>
+                  <div className="pt-2 border-t border-slate-100 dark:border-slate-800">
+                    <button
+                      onClick={() => onSelectCourse(c)}
+                      className="w-full py-2 px-3 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-violet-600 hover:text-white text-slate-700 dark:text-slate-200 text-xs font-bold transition-all text-center"
+                    >
+                      Ver en el Aula Virtual
+                    </button>
+                  </div>
                 </div>
               </div>
             ))}
@@ -198,21 +211,33 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({
               {enrolledCourses.slice(0, 3).map((c) => (
                 <div
                   key={c.id}
-                  className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-3 shadow-xs"
+                  className="rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 overflow-hidden shadow-xs flex flex-col justify-between"
                 >
-                  <span className="text-[11px] font-bold px-2 py-0.5 rounded-md bg-violet-100 dark:bg-violet-950/60 text-violet-700 dark:text-violet-300">
-                    {c.level}
-                  </span>
-                  <h3 className="text-sm font-bold text-slate-900 dark:text-white line-clamp-2">
-                    {c.title}
-                  </h3>
-                  <button
-                    onClick={() => onSelectCourse(c)}
-                    className="w-full py-2 px-3 rounded-xl bg-violet-600 text-white hover:bg-violet-500 text-xs font-bold transition-all flex items-center justify-center gap-1.5"
-                  >
-                    <span>Continuar Aprendizaje</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </button>
+                  <div className="relative aspect-video w-full overflow-hidden bg-slate-950">
+                    <img 
+                      src={getCourseThumbnail(c)} 
+                      alt={c.title} 
+                      className="w-full h-full object-cover" 
+                    />
+                    <div className="absolute top-2.5 left-2.5">
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-slate-900/80 text-violet-300 backdrop-blur-xs">
+                        {c.level}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="p-5 space-y-3 flex-1 flex flex-col justify-between">
+                    <h3 className="text-sm font-bold text-slate-900 dark:text-white line-clamp-2">
+                      {c.title}
+                    </h3>
+                    <button
+                      onClick={() => onSelectCourse(c)}
+                      className="w-full py-2 px-3 rounded-xl bg-violet-600 text-white hover:bg-violet-500 text-xs font-bold transition-all flex items-center justify-center gap-1.5"
+                    >
+                      <span>Continuar Aprendizaje</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>

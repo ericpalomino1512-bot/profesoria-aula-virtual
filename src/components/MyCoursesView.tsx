@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import type { Course, CourseProgress } from '../types/course';
+import { getCourseThumbnail } from '../utils/courseImages';
 import { 
   PlayCircle, 
   Award, 
@@ -112,15 +113,27 @@ export const MyCoursesView: React.FC<MyCoursesViewProps> = ({
                     key={course.id}
                     className="group flex flex-col bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 hover:border-violet-400 dark:hover:border-violet-700 shadow-sm hover:shadow-xl transition-all duration-200 overflow-hidden"
                   >
-                    {/* Header Badge */}
-                    <div className="p-6 pb-4 flex items-center justify-between border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/20">
-                      <span className="text-[11px] font-bold px-2.5 py-1 rounded-lg bg-violet-100 dark:bg-violet-950/70 text-violet-700 dark:text-violet-300">
-                        {course.level}
-                      </span>
+                    {/* Thumbnail Image Header */}
+                    <div className="relative aspect-video w-full overflow-hidden bg-slate-950">
+                      <img 
+                        src={getCourseThumbnail(course)} 
+                        alt={course.title} 
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        loading="lazy"
+                      />
+                      <div className="absolute inset-0 bg-linear-to-t from-slate-950/80 via-transparent to-transparent" />
+                      
+                      <div className="absolute top-3 left-3">
+                        <span className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-slate-900/80 text-violet-300 backdrop-blur-xs">
+                          {course.level}
+                        </span>
+                      </div>
 
-                      <span className="text-xs font-bold text-slate-600 dark:text-slate-400">
-                        {percent}% completado
-                      </span>
+                      <div className="absolute bottom-2.5 right-3">
+                        <span className="text-xs font-bold text-white bg-violet-600/90 px-2 py-0.5 rounded-md backdrop-blur-xs">
+                          {percent}% completado
+                        </span>
+                      </div>
                     </div>
 
                     {/* Body */}
@@ -212,21 +225,34 @@ export const MyCoursesView: React.FC<MyCoursesViewProps> = ({
               {wishlistCourses.map((course) => (
                 <div
                   key={course.id}
-                  className="flex flex-col bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 hover:border-rose-300 dark:hover:border-rose-900/60 shadow-sm hover:shadow-xl transition-all duration-200 overflow-hidden"
+                  className="group flex flex-col bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 hover:border-rose-300 dark:hover:border-rose-900/60 shadow-sm hover:shadow-xl transition-all duration-200 overflow-hidden"
                 >
-                  <div className="p-6 pb-4 flex items-center justify-between border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/20">
-                    <span className="text-[11px] font-bold px-2.5 py-1 rounded-lg bg-rose-100 dark:bg-rose-950/70 text-rose-700 dark:text-rose-300">
-                      {course.level}
-                    </span>
+                  {/* Thumbnail Image */}
+                  <div className="relative aspect-video w-full overflow-hidden bg-slate-950">
+                    <img 
+                      src={getCourseThumbnail(course)} 
+                      alt={course.title} 
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      loading="lazy"
+                    />
+                    <div className="absolute inset-0 bg-linear-to-t from-slate-950/80 via-transparent to-transparent" />
+                    
+                    <div className="absolute top-3 left-3">
+                      <span className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-slate-900/80 text-rose-300 backdrop-blur-xs">
+                        {course.level}
+                      </span>
+                    </div>
 
                     {onRemoveFromWishlist && (
-                      <button
-                        onClick={() => onRemoveFromWishlist(course.id)}
-                        className="text-xs text-slate-400 hover:text-rose-500 font-semibold"
-                        title="Quitar de favoritos"
-                      >
-                        Quitar
-                      </button>
+                      <div className="absolute top-3 right-3">
+                        <button
+                          onClick={() => onRemoveFromWishlist(course.id)}
+                          className="text-xs bg-slate-900/80 hover:bg-rose-600 text-white px-2.5 py-1 rounded-lg backdrop-blur-xs font-semibold transition-colors"
+                          title="Quitar de favoritos"
+                        >
+                          Quitar
+                        </button>
+                      </div>
                     )}
                   </div>
 

@@ -6,7 +6,8 @@ import {
   Briefcase, 
   ExternalLink,
   BookOpen,
-  Award
+  Award,
+  Lock
 } from 'lucide-react';
 import type { Unit, Lesson } from '../types/course';
 
@@ -17,6 +18,7 @@ interface CourseSidebarProps {
   activeLessonId: string;
   activeSection: ActiveSectionType;
   completedLessonIds: string[];
+  isEnrolled?: boolean;
   onSelectLesson: (lesson: Lesson, unit: Unit) => void;
   onSelectSection: (section: ActiveSectionType) => void;
   isAssessmentSubmitted?: boolean;
@@ -27,6 +29,7 @@ export const CourseSidebar: React.FC<CourseSidebarProps> = ({
   activeLessonId,
   activeSection,
   completedLessonIds,
+  isEnrolled = true,
   onSelectLesson,
   onSelectSection,
   isAssessmentSubmitted,
@@ -47,9 +50,16 @@ export const CourseSidebar: React.FC<CourseSidebarProps> = ({
         </span>
       </div>
 
+      {!isEnrolled && (
+        <div className="p-3 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900/50 text-[11px] text-amber-800 dark:text-amber-300 flex items-start gap-2">
+          <Lock className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+          <span>Estás en <strong>Vista Previa</strong>. Inscríbete para desbloquear todo el curso.</span>
+        </div>
+      )}
+
       {/* Units and Lessons scrollable list */}
       <div className="space-y-5 max-h-[calc(100vh-22rem)] overflow-y-auto pr-1">
-        {units.map((unit) => {
+        {units.map((unit, unitIdx) => {
           const unitCompletedCount = unit.lessons.filter(l => completedLessonIds.includes(l.id)).length;
 
           return (
@@ -72,19 +82,23 @@ export const CourseSidebar: React.FC<CourseSidebarProps> = ({
 
               {/* Lesson items */}
               <div className="space-y-1">
-                {unit.lessons.map((lesson) => {
+                {unit.lessons.map((lesson, lessonIdx) => {
                   const isActive = activeSection === 'lesson' && activeLessonId === lesson.id;
                   const isCompleted = completedLessonIds.includes(lesson.id);
+                  const isFreePreview = unitIdx === 0 && lessonIdx === 0;
+                  const isLocked = !isEnrolled && !isFreePreview;
 
                   return (
                     <button
                       key={lesson.id}
                       onClick={() => onSelectLesson(lesson, unit)}
-                      className={`w-full text-left flex items-start gap-2.5 px-3 py-2.5 rounded-xl text-xs transition-all relative group ${
+                      className={`w-full text-left flex items-start gap-2.5 px-3 py-2.5 rounded-xl text-xs transition-all relative group cursor-pointer ${
                         isActive
                           ? 'bg-violet-600 text-white font-semibold shadow-md shadow-violet-500/25 ring-1 ring-violet-500'
                           : isCompleted
                           ? 'bg-emerald-50/60 dark:bg-emerald-950/20 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+                          : isLocked
+                          ? 'text-slate-400 dark:text-slate-500 hover:bg-slate-100/50 dark:hover:bg-slate-800/40'
                           : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/80 hover:text-slate-900 dark:hover:text-slate-200'
                       }`}
                     >
@@ -95,7 +109,9 @@ export const CourseSidebar: React.FC<CourseSidebarProps> = ({
 
                       {/* Status Icon */}
                       <span className="shrink-0 mt-0.5">
-                        {isCompleted ? (
+                        {isLocked ? (
+                          <Lock className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500" />
+                        ) : isCompleted ? (
                           <CheckCircle className={`w-3.5 h-3.5 ${isActive ? 'text-white' : 'text-emerald-500 dark:text-emerald-400'}`} />
                         ) : isActive ? (
                           <span className="w-3.5 h-3.5 rounded-full border-2 border-white flex items-center justify-center">
@@ -116,6 +132,12 @@ export const CourseSidebar: React.FC<CourseSidebarProps> = ({
                         </span>
                       </div>
 
+                      {isFreePreview && !isEnrolled && (
+                        <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-violet-100 dark:bg-violet-950 text-violet-700 dark:text-violet-300 shrink-0">
+                          Gratis
+                        </span>
+                      )}
+
                     </button>
                   );
                 })}
@@ -135,14 +157,20 @@ export const CourseSidebar: React.FC<CourseSidebarProps> = ({
         {/* Final Assessment */}
         <button
           onClick={() => onSelectSection('final-assessment')}
-          className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-all ${
+          className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
             activeSection === 'final-assessment'
               ? 'bg-violet-600 text-white shadow-md shadow-violet-500/20'
+              : !isEnrolled
+              ? 'text-slate-400 dark:text-slate-500 hover:bg-slate-100/50'
               : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
           }`}
         >
           <div className="flex items-center gap-2">
-            <Award className={`w-4 h-4 ${activeSection === 'final-assessment' ? 'text-white' : 'text-amber-500'}`} />
+            {!isEnrolled ? (
+              <Lock className="w-4 h-4 text-slate-400" />
+            ) : (
+              <Award className={`w-4 h-4 ${activeSection === 'final-assessment' ? 'text-white' : 'text-amber-500'}`} />
+            )}
             <span>Evaluación Final</span>
           </div>
           {isAssessmentSubmitted && (
@@ -155,14 +183,20 @@ export const CourseSidebar: React.FC<CourseSidebarProps> = ({
         {/* Final Projects */}
         <button
           onClick={() => onSelectSection('final-projects')}
-          className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-all ${
+          className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
             activeSection === 'final-projects'
               ? 'bg-violet-600 text-white shadow-md shadow-violet-500/20'
+              : !isEnrolled
+              ? 'text-slate-400 dark:text-slate-500 hover:bg-slate-100/50'
               : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
           }`}
         >
           <div className="flex items-center gap-2">
-            <Briefcase className={`w-4 h-4 ${activeSection === 'final-projects' ? 'text-white' : 'text-indigo-500'}`} />
+            {!isEnrolled ? (
+              <Lock className="w-4 h-4 text-slate-400" />
+            ) : (
+              <Briefcase className={`w-4 h-4 ${activeSection === 'final-projects' ? 'text-white' : 'text-indigo-500'}`} />
+            )}
             <span>Proyectos Finales</span>
           </div>
           <ChevronRight className={`w-3.5 h-3.5 ${activeSection === 'final-projects' ? 'text-white' : 'text-slate-400'}`} />

@@ -10,6 +10,7 @@ import { AuthModal } from './components/AuthModal';
 import { ProtectedCreatorGate } from './components/ProtectedCreatorGate';
 import { TeacherManagerModal } from './components/TeacherManagerModal';
 import { UserDashboard } from './components/UserDashboard';
+import { CourseDetailsPage } from './components/CourseDetailsPage';
 import type { Course, CourseFormData, AppActiveView, StudentUser, CourseProgress } from './types/course';
 import { generateCourseWithGemini, getStoredApiKey } from './services/geminiService';
 import { buildCourseFromDocuments, buildCourseFromTopic } from './services/localCourseEngine';
@@ -155,32 +156,60 @@ export const App: React.FC = () => {
   const [loadingStepText, setLoadingStepText] = useState<string>('');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  // Handle course selection
-  const handleSelectCourse = (course: Course) => {
+  // Selected preview lesson ID and pending enroll course for post-login auto-enrollment
+  const [previewLessonId, setPreviewLessonId] = useState<string | undefined>(undefined);
+  const [pendingEnrollCourse, setPendingEnrollCourse] = useState<Course | null>(null);
+
+  // Handle course selection from catalog or list (Opens Udemy Details Landing Page)
+  const handleSelectCourse = (course: Course, startLessonId?: string) => {
     setCurrentCourse(course);
     localStorage.setItem('current_course_data', JSON.stringify(course));
+    setPreviewLessonId(startLessonId);
+
+    // If a specific preview lesson is requested, open viewer directly
+    if (startLessonId) {
+      setActiveView('course-viewer');
+    } else {
+      setActiveView('course-details');
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // Directly enter viewer (e.g., from "Mis Cursos" or enrolled card)
+  const handleEnterCourseViewer = (course: Course) => {
+    setCurrentCourse(course);
+    localStorage.setItem('current_course_data', JSON.stringify(course));
+    setPreviewLessonId(undefined);
     setActiveView('course-viewer');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   // Handle student enrollment
   const handleEnrollCourse = async (course: Course) => {
+    // If not logged in, prompt login/registration first (Udemy flow)
+    if (!currentUser) {
+      setPendingEnrollCourse(course);
+      setAuthModalInitialMode('login');
+      setAuthModalIsTeacherTarget(false);
+      setIsAuthModalOpen(true);
+      return;
+    }
+
     enrollInCourse(course.id);
     let updated = getEnrolledCourseIds();
 
-    if (currentUser) {
-      const cloudUpdated = await enrollUserInSupabase(currentUser.id, course.id);
-      updated = cloudUpdated;
-      setCurrentUser({
-        ...currentUser,
-        enrolledCourseIds: updated,
-      });
-    } else {
-      setIsAuthModalOpen(true);
-    }
+    const cloudUpdated = await enrollUserInSupabase(currentUser.id, course.id);
+    updated = cloudUpdated;
+    setCurrentUser({
+      ...currentUser,
+      enrolledCourseIds: updated,
+    });
 
     setEnrolledIds(updated);
-    handleSelectCourse(course);
+    setCurrentCourse(course);
+    localStorage.setItem('current_course_data', JSON.stringify(course));
+    setActiveView('course-viewer');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   // Generate course by topic/prompt
@@ -399,7 +428,7 @@ export const App: React.FC = () => {
             enrolledCourses={enrolledCoursesList}
             wishlistCourses={wishlistCoursesList}
             progressMap={progressMap}
-            onSelectCourse={handleSelectCourse}
+            onSelectCourse={handleEnterCourseViewer}
             onExploreCatalog={() => setActiveView('catalog')}
             onRemoveFromWishlist={handleToggleWishlist}
           />
@@ -411,9 +440,32 @@ export const App: React.FC = () => {
             catalogCourses={catalogCourses}
             enrolledCourses={enrolledCoursesList}
             progressMap={progressMap}
-            onSelectCourse={handleSelectCourse}
+            onSelectCourse={handleEnterCourseViewer}
             onOpenCreator={() => setActiveView('course-creator')}
             onExploreCatalog={() => setActiveView('catalog')}
+          />
+        )}
+
+        {activeView === 'course-details' && currentCourse && (
+          <CourseDetailsPage
+            course={currentCourse}
+            isEnrolled={enrolledIds.includes(currentCourse.id)}
+            currentUser={currentUser}
+            isWishlisted={wishlistIds.includes(currentCourse.id)}
+            onToggleWishlist={handleToggleWishlist}
+            onEnroll={handleEnrollCourse}
+            onStartCourse={(c, lessonId) => {
+              setCurrentCourse(c);
+              setPreviewLessonId(lessonId);
+              setActiveView('course-viewer');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            onBackToCatalog={() => setActiveView('catalog')}
+            onOpenAuthModal={(mode) => {
+              setAuthModalInitialMode(mode);
+              setAuthModalIsTeacherTarget(false);
+              setIsAuthModalOpen(true);
+            }}
           />
         )}
 
@@ -455,7 +507,13 @@ export const App: React.FC = () => {
         )}
 
         {activeView === 'course-viewer' && currentCourse && (
-          <CourseView course={currentCourse} />
+          <CourseView 
+            course={currentCourse} 
+            isEnrolled={enrolledIds.includes(currentCourse.id)}
+            onEnroll={handleEnrollCourse}
+            onBackToDetails={() => setActiveView('course-details')}
+            initialLessonId={previewLessonId}
+          />
         )}
       </main>
 
@@ -471,6 +529,10 @@ export const App: React.FC = () => {
           localStorage.setItem('profesoria_student_user', JSON.stringify(user));
           if (user.enrolledCourseIds) {
             setEnrolledIds(user.enrolledCourseIds);
+          }
+          if (pendingEnrollCourse) {
+            handleEnrollCourse(pendingEnrollCourse);
+            setPendingEnrollCourse(null);
           }
         }}
         onLogout={async () => {

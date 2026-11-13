@@ -9,7 +9,8 @@ import {
   Clock, 
   ArrowLeft, 
   ArrowRight, 
-  Check 
+  Check,
+  Lock 
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import type { Lesson, Unit, LessonAttachment } from '../types/course';
@@ -21,9 +22,11 @@ interface LessonCardViewProps {
   unit: Unit;
   courseTitle: string;
   isCompleted: boolean;
+  isEnrolled?: boolean;
   onToggleComplete: () => void;
   onPrevLesson?: () => void;
   onNextLesson?: () => void;
+  onEnroll?: () => void;
   hasPrevLesson: boolean;
   hasNextLesson: boolean;
   savedQuizAnswers?: Record<string, number>;
@@ -38,9 +41,11 @@ export const LessonCardView: React.FC<LessonCardViewProps> = ({
   unit,
   courseTitle,
   isCompleted,
+  isEnrolled = true,
   onToggleComplete,
   onPrevLesson,
   onNextLesson,
+  onEnroll,
   hasPrevLesson,
   hasNextLesson,
   savedQuizAnswers = {},
@@ -348,17 +353,27 @@ export const LessonCardView: React.FC<LessonCardViewProps> = ({
         </button>
 
         {/* Center mark complete */}
-        <button
-          onClick={handleMarkCompleteWithConfetti}
-          className={`w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all ${
-            isCompleted
-              ? 'bg-emerald-600 text-white hover:bg-emerald-500 shadow-xs'
-              : 'bg-violet-600 text-white hover:bg-violet-500 shadow-md shadow-violet-500/20'
-          }`}
-        >
-          <Check className="w-4 h-4" />
-          <span>{isCompleted ? 'Lección marcada como completada' : 'Marcar como completada'}</span>
-        </button>
+        {!isEnrolled ? (
+          <button
+            onClick={() => onEnroll && onEnroll()}
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-amber-500 hover:bg-amber-600 text-white shadow-md shadow-amber-500/20 cursor-pointer"
+          >
+            <Lock className="w-4 h-4" />
+            <span>Inscribirme para guardar progreso</span>
+          </button>
+        ) : (
+          <button
+            onClick={handleMarkCompleteWithConfetti}
+            className={`w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer ${
+              isCompleted
+                ? 'bg-emerald-600 text-white hover:bg-emerald-500 shadow-xs'
+                : 'bg-violet-600 text-white hover:bg-violet-500 shadow-md shadow-violet-500/20'
+            }`}
+          >
+            <Check className="w-4 h-4" />
+            <span>{isCompleted ? 'Lección marcada como completada' : 'Marcar como completada'}</span>
+          </button>
+        )}
 
         <button
           onClick={onNextLesson}

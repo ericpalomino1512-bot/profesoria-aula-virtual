@@ -122,7 +122,7 @@ export interface StudentUser {
   role?: 'admin' | 'teacher' | 'student';
 }
 
-export type AppActiveView = 'catalog' | 'my-courses' | 'dashboard' | 'course-viewer' | 'course-creator';
+export type AppActiveView = 'catalog' | 'course-details' | 'my-courses' | 'dashboard' | 'course-viewer' | 'course-creator';
 
 export interface CourseProgress {
   completedLessonIds: string[];
