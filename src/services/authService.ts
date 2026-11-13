@@ -12,7 +12,8 @@ export const isAuthorizedTeacherEmail = (email: string): boolean => {
   const authorized = [
     'ericpalomino1512@gmail.com',
     'contacto@tuscursosinmobiliarios.com',
-    'admin@tuscursosinmobiliarios.com'
+    'admin@tuscursosinmobiliarios.com',
+    'hola@tucorretaje.com'
   ];
   return authorized.includes(normalized) || normalized.startsWith('admin@');
 };
@@ -56,6 +57,23 @@ export const signUpStudent = async (email: string, password: string, name: strin
         enrolled_courses: student.enrolledCourseIds,
         updated_at: new Date().toISOString(),
       });
+
+      // Send registration alert to admin email hola@tucorretaje.com (non-blocking)
+      try {
+        fetch('https://formspree.io/f/xblywekg', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          body: JSON.stringify({
+            alerta: 'Nuevo Alumno Registrado en TusCursosInmobiliarios Campus',
+            destinatario: 'hola@tucorretaje.com',
+            alumno_nombre: student.name,
+            alumno_email: student.email,
+            alumno_id: student.id,
+            fecha_registro: new Date().toLocaleString('es-PE', { timeZone: 'America/Lima' }),
+            origen: 'https://aula.tuscursosinmobiliarios.com',
+          }),
+        }).catch(() => {});
+      } catch (notifyErr) {}
 
       return { user: student, error: null };
     }
