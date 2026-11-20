@@ -148,6 +148,48 @@ export const App: React.FC = () => {
     setProgressMap(map);
   }, [catalogCourses]);
 
+  // Deep-linking from external WordPress landing page and direct URLs
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const viewParam = params.get('view');
+      const courseParam = params.get('course');
+      const actionParam = params.get('action');
+
+      if (courseParam) {
+        const query = courseParam.toLowerCase();
+        const found = catalogCourses.find(
+          c => c.id.toLowerCase() === query ||
+               c.id.toLowerCase().includes(query) ||
+               c.title.toLowerCase().includes(query)
+        );
+        if (found) {
+          setCurrentCourse(found);
+          localStorage.setItem('current_course_data', JSON.stringify(found));
+          setActiveView('course-details');
+          if (params.get('buy') === 'true') {
+            setCheckoutCourse(found);
+          }
+        }
+      } else if (viewParam) {
+        if (['catalog', 'my-courses', 'dashboard', 'course-creator'].includes(viewParam)) {
+          setActiveView(viewParam as AppActiveView);
+        }
+      }
+
+      if (actionParam === 'login' || params.get('login') === 'true') {
+        setAuthModalInitialMode('login');
+        setIsAuthModalOpen(true);
+      } else if (actionParam === 'register' || params.get('register') === 'true') {
+        setAuthModalInitialMode('register');
+        setIsAuthModalOpen(true);
+      }
+    } catch (e) {
+      console.error('Error handling URL query parameters:', e);
+    }
+  }, [catalogCourses]);
+
   // API Key state
   const [apiKey, setApiKey] = useState<string>(getStoredApiKey());
   const [isApiKeyModalOpen, setIsApiKeyModalOpen] = useState<boolean>(false);
