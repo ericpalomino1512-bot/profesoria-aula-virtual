@@ -1,0 +1,1279 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tus Cursos Inmobiliarios - Academia y Certificación Profesional</title>
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <style>
+    /* ===================================================
+       ESTILOS AUTOCONTENIDOS - COMPATIBLES CON WORDPRESS
+       =================================================== */
+    :root {
+      --primary: #6366f1;
+      --primary-dark: #4f46e5;
+      --primary-light: #eef2ff;
+      --secondary: #0f172a;
+      --accent: #10b981;
+      --accent-dark: #059669;
+      --star: #f59e0b;
+      --text-main: #1e293b;
+      --text-muted: #64748b;
+      --bg-light: #f8fafc;
+      --bg-white: #ffffff;
+      --border-color: #e2e8f0;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+      --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.07), 0 2px 4px -2px rgba(0,0,0,0.05);
+      --shadow-xl: 0 20px 25px -5px rgba(0,0,0,0.08), 0 8px 10px -6px rgba(0,0,0,0.04);
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --radius-full: 9999px;
+    }
+
+    /* Reset scoped to landing container */
+    .tci-wrapper * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    .tci-wrapper {
+      width: 100%;
+      background-color: var(--bg-light);
+      color: var(--text-main);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .tci-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    /* Top Urgency / Value Bar */
+    .tci-topbar {
+      background: linear-gradient(90deg, #1e1b4b, #312e81, #1e1b4b);
+      color: #e0e7ff;
+      text-align: center;
+      padding: 10px 15px;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .tci-topbar span.badge {
+      background: #4338ca;
+      color: #ffffff;
+      padding: 2px 8px;
+      border-radius: var(--radius-full);
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    /* Hero Section (Coursera / Udemy style) */
+    .tci-hero {
+      background: linear-gradient(180deg, #0f172a 0%, #1e1b4b 100%);
+      color: #ffffff;
+      padding: 60px 0 80px 0;
+      position: relative;
+      overflow: hidden;
+    }
+    .tci-hero::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -10%;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(99,102,241,0.2) 0%, rgba(0,0,0,0) 70%);
+      pointer-events: none;
+    }
+    .tci-hero-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 40px;
+      align-items: center;
+      position: relative;
+      z-index: 2;
+    }
+    .tci-hero-content h1 {
+      font-size: 42px;
+      font-weight: 900;
+      line-height: 1.18;
+      margin-bottom: 18px;
+      letter-spacing: -0.02em;
+    }
+    .tci-hero-content h1 span.highlight {
+      background: linear-gradient(90deg, #818cf8, #38bdf8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .tci-hero-content p.subtitle {
+      font-size: 17px;
+      color: #cbd5e1;
+      margin-bottom: 28px;
+      line-height: 1.6;
+    }
+    .tci-hero-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin-bottom: 30px;
+    }
+    .tci-hero-badge-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: #f1f5f9;
+      font-weight: 600;
+      background: rgba(255, 255, 255, 0.08);
+      padding: 8px 14px;
+      border-radius: var(--radius-full);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+    .tci-hero-badge-item svg {
+      width: 16px;
+      height: 16px;
+      color: #38bdf8;
+    }
+
+    .tci-hero-cta {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+    .tci-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 14px 28px;
+      border-radius: var(--radius-md);
+      font-weight: 700;
+      font-size: 15px;
+      text-decoration: none;
+      transition: all 0.25s ease;
+      cursor: pointer;
+      border: none;
+    }
+    .tci-btn-primary {
+      background: linear-gradient(135deg, #6366f1, #4f46e5);
+      color: #ffffff;
+      box-shadow: 0 10px 20px -5px rgba(99, 102, 241, 0.45);
+    }
+    .tci-btn-primary:hover {
+      background: linear-gradient(135deg, #4f46e5, #4338ca);
+      transform: translateY(-2px);
+      box-shadow: 0 14px 24px -5px rgba(99, 102, 241, 0.55);
+    }
+    .tci-btn-secondary {
+      background: rgba(255, 255, 255, 0.12);
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    .tci-btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: translateY(-2px);
+    }
+
+    /* Hero Card Visual */
+    .tci-hero-visual {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+      backdrop-filter: blur(12px);
+    }
+    .tci-hero-card-img {
+      width: 100%;
+      height: 200px;
+      border-radius: var(--radius-md);
+      object-fit: cover;
+      margin-bottom: 16px;
+      display: block;
+    }
+    .tci-hero-stat-box {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 15px;
+    }
+    .tci-stat-item {
+      background: rgba(15, 23, 42, 0.6);
+      padding: 12px;
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      text-align: center;
+    }
+    .tci-stat-num {
+      font-size: 22px;
+      font-weight: 800;
+      color: #38bdf8;
+      display: block;
+    }
+    .tci-stat-lbl {
+      font-size: 11px;
+      color: #94a3b8;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    /* Filter & Categories Bar */
+    .tci-filter-bar {
+      background: #ffffff;
+      border-bottom: 1px solid var(--border-color);
+      padding: 16px 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: var(--shadow-sm);
+    }
+    .tci-categories {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      scrollbar-width: thin;
+    }
+    .tci-categories::-webkit-scrollbar {
+      height: 4px;
+    }
+    .tci-categories::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+    .tci-cat-btn {
+      padding: 8px 18px;
+      border-radius: var(--radius-full);
+      background: #f1f5f9;
+      color: var(--text-main);
+      font-size: 13px;
+      font-weight: 600;
+      border: 1px solid #e2e8f0;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .tci-cat-btn:hover,
+    .tci-cat-btn.active {
+      background: var(--primary);
+      color: #ffffff;
+      border-color: var(--primary);
+    }
+
+    /* Section Headers */
+    .tci-section {
+      padding: 70px 0;
+    }
+    .tci-section-header {
+      margin-bottom: 40px;
+      text-align: left;
+    }
+    .tci-section-header span.tag {
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      color: var(--primary);
+      letter-spacing: 0.8px;
+      display: block;
+      margin-bottom: 6px;
+    }
+    .tci-section-header h2 {
+      font-size: 32px;
+      font-weight: 800;
+      color: var(--secondary);
+      letter-spacing: -0.02em;
+    }
+    .tci-section-header p {
+      font-size: 15px;
+      color: var(--text-muted);
+      margin-top: 6px;
+      max-width: 650px;
+    }
+
+    /* Udemy / Coursera Course Cards Grid */
+    .tci-courses-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 28px;
+    }
+    .tci-course-card {
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      display: flex;
+      flex-col: column;
+      flex-direction: column;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.3s ease;
+      position: relative;
+    }
+    .tci-course-card:hover {
+      transform: translateY(-6px);
+      box-shadow: var(--shadow-xl);
+      border-color: #cbd5e1;
+    }
+    .tci-card-thumb-wrap {
+      position: relative;
+      width: 100%;
+      height: 175px;
+      background: #0f172a;
+      overflow: hidden;
+    }
+    .tci-card-thumb {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+    .tci-course-card:hover .tci-card-thumb {
+      transform: scale(1.05);
+    }
+    .tci-card-badge {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: #ffffff;
+      color: var(--secondary);
+      font-size: 11px;
+      font-weight: 800;
+      padding: 3px 9px;
+      border-radius: 6px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+      text-transform: uppercase;
+    }
+    .tci-card-badge.bestseller {
+      background: #fef08a;
+      color: #854d0e;
+    }
+    .tci-card-body {
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+    .tci-card-category {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+    }
+    .tci-card-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--secondary);
+      line-height: 1.35;
+      margin-bottom: 8px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .tci-card-instructor {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+    .tci-card-rating {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      margin-bottom: 12px;
+    }
+    .tci-rating-score {
+      font-weight: 800;
+      color: #b45309;
+    }
+    .tci-rating-stars {
+      color: var(--star);
+      font-size: 12px;
+      letter-spacing: 1px;
+    }
+    .tci-rating-count {
+      color: var(--text-muted);
+      font-size: 12px;
+    }
+    .tci-card-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+      border-top: 1px solid #f1f5f9;
+      padding-top: 10px;
+    }
+    .tci-meta-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .tci-card-price-row {
+      margin-top: auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 12px;
+      border-top: 1px dashed var(--border-color);
+    }
+    .tci-price-block {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+    }
+    .tci-price-curr {
+      font-size: 20px;
+      font-weight: 900;
+      color: var(--secondary);
+    }
+    .tci-price-old {
+      font-size: 13px;
+      color: #94a3b8;
+      text-decoration: line-through;
+    }
+    .tci-card-btn {
+      background: var(--primary);
+      color: #ffffff;
+      padding: 8px 16px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+    .tci-card-btn:hover {
+      background: var(--primary-dark);
+    }
+
+    /* Benefits Section (Coursera style) */
+    .tci-benefits {
+      background: #ffffff;
+      border-top: 1px solid var(--border-color);
+      border-bottom: 1px solid var(--border-color);
+    }
+    .tci-benefits-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 30px;
+    }
+    .tci-benefit-card {
+      padding: 24px;
+      border-radius: var(--radius-md);
+      background: var(--bg-light);
+      border: 1px solid var(--border-color);
+      transition: all 0.3s;
+    }
+    .tci-benefit-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-md);
+      border-color: #cbd5e1;
+    }
+    .tci-benefit-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: var(--primary-light);
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+    }
+    .tci-benefit-icon svg {
+      width: 24px;
+      height: 24px;
+    }
+    .tci-benefit-card h3 {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--secondary);
+      margin-bottom: 8px;
+    }
+    .tci-benefit-card p {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    /* How It Works Steps */
+    .tci-steps-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 24px;
+    }
+    .tci-step-card {
+      background: #ffffff;
+      padding: 28px 24px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-color);
+      position: relative;
+    }
+    .tci-step-num {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      font-size: 38px;
+      font-weight: 900;
+      color: #e2e8f0;
+      line-height: 1;
+    }
+    .tci-step-card h3 {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--secondary);
+      margin-bottom: 8px;
+    }
+    .tci-step-card p {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.55;
+    }
+
+    /* Testimonials / Social Proof */
+    .tci-testimonials {
+      background: #0f172a;
+      color: #ffffff;
+    }
+    .tci-testimonials .tci-section-header h2 {
+      color: #ffffff;
+    }
+    .tci-testimonials .tci-section-header p {
+      color: #94a3b8;
+    }
+    .tci-testi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+    }
+    .tci-testi-card {
+      background: #1e293b;
+      padding: 24px;
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(255,255,255,0.08);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .tci-testi-stars {
+      color: var(--star);
+      font-size: 14px;
+      margin-bottom: 12px;
+    }
+    .tci-testi-text {
+      font-size: 14px;
+      color: #cbd5e1;
+      line-height: 1.6;
+      margin-bottom: 18px;
+      font-style: italic;
+    }
+    .tci-testi-author {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .tci-testi-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-full);
+      object-fit: cover;
+      border: 2px solid var(--primary);
+    }
+    .tci-testi-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: #ffffff;
+    }
+    .tci-testi-role {
+      font-size: 12px;
+      color: #94a3b8;
+    }
+
+    /* FAQ Accordion */
+    .tci-faq-list {
+      max-width: 800px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .tci-faq-item {
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      transition: border 0.2s;
+    }
+    .tci-faq-item.active {
+      border-color: var(--primary);
+    }
+    .tci-faq-question {
+      padding: 20px 24px;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--secondary);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      user-select: none;
+    }
+    .tci-faq-question svg {
+      width: 20px;
+      height: 20px;
+      color: var(--text-muted);
+      transition: transform 0.25s ease;
+    }
+    .tci-faq-item.active .tci-faq-question svg {
+      transform: rotate(180deg);
+      color: var(--primary);
+    }
+    .tci-faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      padding: 0 24px;
+      color: var(--text-muted);
+      font-size: 14px;
+      line-height: 1.6;
+      transition: max-height 0.3s ease, padding 0.3s ease;
+    }
+    .tci-faq-item.active .tci-faq-answer {
+      max-height: 200px;
+      padding-bottom: 20px;
+    }
+
+    /* Final CTA Banner */
+    .tci-final-cta {
+      background: linear-gradient(135deg, #4f46e5 0%, #312e81 100%);
+      color: #ffffff;
+      padding: 60px 20px;
+      border-radius: var(--radius-lg);
+      text-align: center;
+      margin: 40px auto 70px auto;
+      max-width: 1100px;
+      box-shadow: 0 25px 50px -12px rgba(79, 70, 229, 0.35);
+      position: relative;
+    }
+    .tci-final-cta h2 {
+      font-size: 34px;
+      font-weight: 900;
+      margin-bottom: 14px;
+      letter-spacing: -0.02em;
+    }
+    .tci-final-cta p {
+      font-size: 16px;
+      color: #e0e7ff;
+      max-width: 600px;
+      margin: 0 auto 28px auto;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 900px) {
+      .tci-hero-grid {
+        grid-template-columns: 1fr;
+        text-align: center;
+      }
+      .tci-hero-content h1 {
+        font-size: 32px;
+      }
+      .tci-hero-badges {
+        justify-content: center;
+      }
+      .tci-hero-cta {
+        justify-content: center;
+      }
+      .tci-hero-visual {
+        max-width: 450px;
+        margin: 0 auto;
+      }
+      .tci-section-header {
+        text-align: center;
+      }
+      .tci-section-header p {
+        margin: 6px auto 0 auto;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .tci-hero {
+        padding: 40px 0 60px 0;
+      }
+      .tci-hero-content h1 {
+        font-size: 26px;
+      }
+      .tci-hero-content p.subtitle {
+        font-size: 15px;
+      }
+      .tci-btn {
+        width: 100%;
+      }
+      .tci-courses-grid {
+        grid-template-columns: 1fr;
+      }
+      .tci-final-cta h2 {
+        font-size: 26px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- CONTENEDOR PRINCIPAL LISTO PARA COPIAR Y PEGAR EN WORDPRESS -->
+<div class="tci-wrapper">
+
+  <!-- 1. Top Urgency & Trust Bar -->
+  <div class="tci-topbar">
+    <span class="badge">Nuevo</span>
+    <span>Acredita tus competencias con el Campus Oficial de TusCursosInmobiliarios</span>
+    <span>•</span>
+    <span>Certificados con validación QR y acceso de por vida</span>
+  </div>
+
+  <!-- 2. Hero Section estilo Coursera / Udemy -->
+  <section class="tci-hero">
+    <div class="tci-container">
+      <div class="tci-hero-grid">
+        
+        <div class="tci-hero-content">
+          <h1>
+            Acelera tu carrera inmobiliaria con formación <span class="highlight">práctica y certificada</span>
+          </h1>
+          <p class="subtitle">
+            Aprende las estrategias reales de captación en exclusiva, tasación precisa, marketing digital y cierre de operaciones de alto valor. Estudia a tu propio ritmo desde cualquier dispositivo.
+          </p>
+
+          <div class="tci-hero-badges">
+            <div class="tci-hero-badge-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>
+              <span>4.9 / 5.0 Valoración de Alumnos</span>
+            </div>
+            <div class="tci-hero-badge-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+              <span>Acceso Inmediato 24/7</span>
+            </div>
+            <div class="tci-hero-badge-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+              <span>Certificado Oficial Descargable</span>
+            </div>
+          </div>
+
+          <div class="tci-hero-cta">
+            <a href="https://aula.tuscursosinmobiliarios.com" class="tci-btn tci-btn-primary" target="_blank">
+              <span>Explorar Todos los Cursos</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+            </a>
+            <a href="#catalogo" class="tci-btn tci-btn-secondary">
+              Ver Cursos Más Vendidos
+            </a>
+          </div>
+        </div>
+
+        <!-- Visual Hero Card -->
+        <div class="tci-hero-visual">
+          <img src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=700&q=80" alt="Aula Virtual Inmobiliaria" class="tci-hero-card-img">
+          <div style="color: #ffffff;">
+            <div style="font-size: 13px; font-weight: 700; color: #818cf8; text-transform: uppercase;">Campus Oficial en Vivo</div>
+            <div style="font-size: 16px; font-weight: 800; margin-top: 4px;">Lecciones interactivas, videos explicativos y plantillas Excel</div>
+          </div>
+          <div class="tci-hero-stat-box">
+            <div class="tci-stat-item">
+              <span class="tci-stat-num">+3,400</span>
+              <span class="tci-stat-lbl">Agentes Capacitados</span>
+            </div>
+            <div class="tci-stat-item">
+              <span class="tci-stat-num">100%</span>
+              <span class="tci-stat-lbl">Práctico y Aplicado</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. Sticky Categories Filter Bar -->
+  <div class="tci-filter-bar">
+    <div class="tci-container">
+      <div class="tci-categories">
+        <button class="tci-cat-btn active" onclick="filterCategory('todos', this)">Todos los Cursos</button>
+        <button class="tci-cat-btn" onclick="filterCategory('captacion', this)">Captación y Exclusivas</button>
+        <button class="tci-cat-btn" onclick="filterCategory('tasacion', this)">Tasación y Valoración</button>
+        <button class="tci-cat-btn" onclick="filterCategory('marketing', this)">Marketing Inmobiliario</button>
+        <button class="tci-cat-btn" onclick="filterCategory('ventas', this)">Cierre de Ventas</button>
+        <button class="tci-cat-btn" onclick="filterCategory('legal', this)">Derecho y Contratos</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. Catálogo de Cursos estilo Udemy Grid -->
+  <section id="catalogo" class="tci-section">
+    <div class="tci-container">
+      <div class="tci-section-header">
+        <span class="tag">Programas de Alto Rendimiento</span>
+        <h2>Los Cursos Inmobiliarios Más Demandados</h2>
+        <p>Aprende paso a paso con programas diseñados para multiplicar tus captaciones, ventas y comisiones profesionales.</p>
+      </div>
+
+      <div class="tci-courses-grid">
+
+        <!-- Curso 1 -->
+        <div class="tci-course-card" data-cat="captacion">
+          <div class="tci-card-thumb-wrap">
+            <img src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=600&q=80" alt="Captación en Exclusiva" class="tci-card-thumb">
+            <span class="tci-card-badge bestseller">Más Vendido</span>
+          </div>
+          <div class="tci-card-body">
+            <span class="tci-card-category">Captación</span>
+            <h3 class="tci-card-title">Especialista en Captación y Venta en Exclusiva Inmobiliaria</h3>
+            <p class="tci-card-instructor">Por Academia TusCursosInmobiliarios</p>
+            <div class="tci-card-rating">
+              <span class="tci-rating-score">4.9</span>
+              <span class="tci-rating-stars">★★★★★</span>
+              <span class="tci-rating-count">(1,280 alumnos)</span>
+            </div>
+            <div class="tci-card-meta">
+              <div class="tci-meta-item">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                <span>8 horas</span>
+              </div>
+              <div class="tci-meta-item">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+                <span>16 lecciones</span>
+              </div>
+            </div>
+            <div class="tci-card-price-row">
+              <div class="tci-price-block">
+                <span class="tci-price-curr">$49 USD</span>
+                <span class="tci-price-old">$99 USD</span>
+              </div>
+              <a href="https://aula.tuscursosinmobiliarios.com" target="_blank" class="tci-card-btn">Ver Curso</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Curso 2 -->
+        <div class="tci-course-card" data-cat="tasacion">
+          <div class="tci-card-thumb-wrap">
+            <img src="https://images.unsplash.com/photo-1582407947304-fd86f028f716?auto=format&fit=crop&w=600&q=80" alt="Tasación Inmobiliaria" class="tci-card-thumb">
+            <span class="tci-card-badge">Práctico</span>
+          </div>
+          <div class="tci-card-body">
+            <span class="tci-card-category">Tasación</span>
+            <h3 class="tci-card-title">Tasación y Valoración Práctica de Inmuebles Residenciales</h3>
+            <p class="tci-card-instructor">Por Academia TusCursosInmobiliarios</p>
+            <div class="tci-card-rating">
+              <span class="tci-rating-score">4.8</span>
+              <span class="tci-rating-stars">★★★★★</span>
+              <span class="tci-rating-count">(940 alumnos)</span>
+            </div>
+            <div class="tci-card-meta">
+              <div class="tci-meta-item">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                <span>6 horas</span>
+              </div>
+              <div class="tci-meta-item">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+                <span>Plantillas Excel</span>
+              </div>
+            </div>
+            <div class="tci-card-price-row">
+              <div class="tci-price-block">
+                <span class="tci-price-curr">$39 USD</span>
+                <span class="tci-price-old">$79 USD</span>
+              </div>
+              <a href="https://aula.tuscursosinmobiliarios.com" target="_blank" class="tci-card-btn">Ver Curso</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Curso 3 -->
+        <div class="tci-course-card" data-cat="marketing">
+          <div class="tci-card-thumb-wrap">
+            <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=600&q=80" alt="Marketing Inmobiliario" class="tci-card-thumb">
+            <span class="tci-card-badge bestseller">Popular</span>
+          </div>
+          <div class="tci-card-body">
+            <span class="tci-card-category">Marketing Digital</span>
+            <h3 class="tci-card-title">Marketing Digital Inmobiliario y Captación de Leads en Meta & Google</h3>
+            <p class="tci-card-instructor">Por Academia TusCursosInmobiliarios</p>
+            <div class="tci-card-rating">
+              <span class="tci-rating-score">4.9</span>
+              <span class="tci-rating-stars">★★★★★</span>
+              <span class="tci-rating-count">(1,610 alumnos)</span>
+            </div>
+            <div class="tci-card-meta">
+              <div class="tci-meta-item">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                <span>10 horas</span>
+              </div>
+              <div class="tci-meta-item">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+                <span>20 lecciones</span>
+              </div>
+            </div>
+            <div class="tci-card-price-row">
+              <div class="tci-price-block">
+                <span class="tci-price-curr">$45 USD</span>
+                <span class="tci-price-old">$90 USD</span>
+              </div>
+              <a href="https://aula.tuscursosinmobiliarios.com" target="_blank" class="tci-card-btn">Ver Curso</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Curso 4 -->
+        <div class="tci-course-card" data-cat="ventas">
+          <div class="tci-card-thumb-wrap">
+            <img src="https://images.unsplash.com/photo-1556742049-0a67c5574f73?auto=format&fit=crop&w=600&q=80" alt="Cierre de Ventas" class="tci-card-thumb">
+            <span class="tci-card-badge">Destacado</span>
+          </div>
+          <div class="tci-card-body">
+            <span class="tci-card-category">Ventas y Negociación</span>
+            <h3 class="tci-card-title">Cierre de Ventas, Manejo de Objeciones y Negociación de Alto Impacto</h3>
+            <p class="tci-card-instructor">Por Academia TusCursosInmobiliarios</p>
+            <div class="tci-card-rating">
+              <span class="tci-rating-score">4.9</span>
+              <span class="tci-rating-stars">★★★★★</span>
+              <span class="tci-rating-count">(820 alumnos)</span>
+            </div>
+            <div class="tci-card-meta">
+              <div class="tci-meta-item">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                <span>7 horas</span>
+              </div>
+              <div class="tci-meta-item">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+                <span>Guiones de Venta</span>
+              </div>
+            </div>
+            <div class="tci-card-price-row">
+              <div class="tci-price-block">
+                <span class="tci-price-curr">$35 USD</span>
+                <span class="tci-price-old">$70 USD</span>
+              </div>
+              <a href="https://aula.tuscursosinmobiliarios.com" target="_blank" class="tci-card-btn">Ver Curso</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Curso 5 -->
+        <div class="tci-course-card" data-cat="legal">
+          <div class="tci-card-thumb-wrap">
+            <img src="https://images.unsplash.com/photo-1450133064473-71024230f91b?auto=format&fit=crop&w=600&q=80" alt="Derecho Inmobiliario" class="tci-card-thumb">
+            <span class="tci-card-badge">Especialización</span>
+          </div>
+          <div class="tci-card-body">
+            <span class="tci-card-category">Legal y Notarial</span>
+            <h3 class="tci-card-title">Derecho Inmobiliario, Redacción de Contratos y Trámites Notariales</h3>
+            <p class="tci-card-instructor">Por Academia TusCursosInmobiliarios</p>
+            <div class="tci-card-rating">
+              <span class="tci-rating-score">4.8</span>
+              <span class="tci-rating-stars">★★★★★</span>
+              <span class="tci-rating-count">(710 alumnos)</span>
+            </div>
+            <div class="tci-card-meta">
+              <div class="tci-meta-item">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                <span>9 horas</span>
+              </div>
+              <div class="tci-meta-item">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+                <span>Modelos de Contratos</span>
+              </div>
+            </div>
+            <div class="tci-card-price-row">
+              <div class="tci-price-block">
+                <span class="tci-price-curr">$55 USD</span>
+                <span class="tci-price-old">$110 USD</span>
+              </div>
+              <a href="https://aula.tuscursosinmobiliarios.com" target="_blank" class="tci-card-btn">Ver Curso</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Curso 6 -->
+        <div class="tci-course-card" data-cat="captacion">
+          <div class="tci-card-thumb-wrap">
+            <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=600&q=80" alt="Gestión de Alquileres" class="tci-card-thumb">
+            <span class="tci-card-badge" style="background: #dcfce7; color: #15803d;">Gratuito</span>
+          </div>
+          <div class="tci-card-body">
+            <span class="tci-card-category">Alquileres Seguros</span>
+            <h3 class="tci-card-title">Fundamentos de Gestión de Alquileres y Selección de Inquilinos</h3>
+            <p class="tci-card-instructor">Por Academia TusCursosInmobiliarios</p>
+            <div class="tci-card-rating">
+              <span class="tci-rating-score">4.7</span>
+              <span class="tci-rating-stars">★★★★★</span>
+              <span class="tci-rating-count">(2,100 alumnos)</span>
+            </div>
+            <div class="tci-card-meta">
+              <div class="tci-meta-item">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                <span>4 horas</span>
+              </div>
+              <div class="tci-meta-item">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+                <span>Acceso Abierto</span>
+              </div>
+            </div>
+            <div class="tci-card-price-row">
+              <div class="tci-price-block">
+                <span class="tci-price-curr" style="color: #10b981;">Gratis</span>
+                <span class="tci-price-old">$39 USD</span>
+              </div>
+              <a href="https://aula.tuscursosinmobiliarios.com" target="_blank" class="tci-card-btn" style="background: #10b981;">Inscribirme</a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. Por qué formarte con nosotros (Coursera / Value Pillars) -->
+  <section class="tci-section tci-benefits">
+    <div class="tci-container">
+      <div class="tci-section-header">
+        <span class="tag">Ventajas del Campus</span>
+        <h2>¿Por Qué Estudiar en Tus Cursos Inmobiliarios?</h2>
+        <p>A diferencia de la teoría tradicional, nuestra metodología se enfoca en resolver las situaciones reales con las que te encuentras a diario en la calle y en la notaría.</p>
+      </div>
+
+      <div class="tci-benefits-grid">
+        <div class="tci-benefit-card">
+          <div class="tci-benefit-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
+          </div>
+          <h3>Enfoque 100% Práctico</h3>
+          <p>Casos reales de tasaciones, modelos de contratos y técnicas de negociación listas para ser implementadas de inmediato.</p>
+        </div>
+
+        <div class="tci-benefit-card">
+          <div class="tci-benefit-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="7"></circle><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline></svg>
+          </div>
+          <h3>Certificado Oficial con QR</h3>
+          <p>Acredita tus conocimientos ante clientes y agencias con diplomas verificables en línea mediante código QR único.</p>
+        </div>
+
+        <div class="tci-benefit-card">
+          <div class="tci-benefit-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+          </div>
+          <h3>Estudia a tu Ritmo</h3>
+          <p>Campus accesible las 24 horas del día desde teléfono móvil, tablet o computadora sin límites ni horarios fijos.</p>
+        </div>
+
+        <div class="tci-benefit-card">
+          <div class="tci-benefit-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+          </div>
+          <h3>Plantillas Descargables</h3>
+          <p>Hojas de cálculo en Excel para tasación, guiones telefónicos y documentos PDF listos para tus operaciones.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. Cómo funciona (3 sencillos pasos) -->
+  <section class="tci-section">
+    <div class="tci-container">
+      <div class="tci-section-header">
+        <span class="tag">Paso a Paso</span>
+        <h2>¿Cómo Funciona el Aula Virtual?</h2>
+        <p>Comienza a capacitarte en menos de 2 minutos siguiendo este sencillo proceso.</p>
+      </div>
+
+      <div class="tci-steps-grid">
+        <div class="tci-step-card">
+          <span class="tci-step-num">01</span>
+          <h3>1. Elige tu Curso</h3>
+          <p>Selecciona el programa que necesitas en nuestro catálogo y accede de inmediato sin esperas.</p>
+        </div>
+        <div class="tci-step-card">
+          <span class="tci-step-num">02</span>
+          <h3>2. Aprende y Practica</h3>
+          <p>Mira los videos explicativos, interactúa con el contenido y descarga las plantillas de trabajo.</p>
+        </div>
+        <div class="tci-step-card">
+          <span class="tci-step-num">03</span>
+          <h3>3. Obtén tu Certificado</h3>
+          <p>Supera la evaluación formativa y descarga tu diploma acreditativo con código de verificación.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. Testimonios de Alumnos Reales -->
+  <section class="tci-section tci-testimonials">
+    <div class="tci-container">
+      <div class="tci-section-header">
+        <span class="tag" style="color: #818cf8;">Opiniones Reales</span>
+        <h2>Lo que Dicen Nuestros Alumnos</h2>
+        <p>Agentes independientes y equipos de agencias inmobiliarias que ya están aplicando lo aprendido.</p>
+      </div>
+
+      <div class="tci-testi-grid">
+        <div class="tci-testi-card">
+          <div>
+            <div class="tci-testi-stars">★★★★★</div>
+            <p class="tci-testi-text">"El curso de Captación en Exclusiva cambió por completo mi forma de hablar con propietarios. Pasé de que me colgaran el teléfono a cerrar 3 exclusivas el mes pasado."</p>
+          </div>
+          <div class="tci-testi-author">
+            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80" alt="Laura Méndez" class="tci-testi-avatar">
+            <div>
+              <div class="tci-testi-name">Laura Méndez</div>
+              <div class="tci-testi-role">Agente Inmobiliaria Independiente</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tci-testi-card">
+          <div>
+            <div class="tci-testi-stars">★★★★★</div>
+            <p class="tci-testi-text">"La plantilla de tasación en Excel que descargué en el curso de valoración me ahorra horas en cada estudio de mercado. La explicación en video es clara y directa al grano."</p>
+          </div>
+          <div class="tci-testi-author">
+            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=120&q=80" alt="Carlos Benítez" class="tci-testi-avatar">
+            <div>
+              <div class="tci-testi-name">Carlos Benítez</div>
+              <div class="tci-testi-role">Director de Agencia Inmobiliaria</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tci-testi-card">
+          <div>
+            <div class="tci-testi-stars">★★★★★</div>
+            <p class="tci-testi-text">"Poder estudiar desde el celular entre visita y visita a propiedades es lo mejor. Los cuestionarios al final de cada tema te ayudan a fijar los conceptos legales indispensables."</p>
+          </div>
+          <div class="tci-testi-author">
+            <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=120&q=80" alt="Sofía Valenzuela" class="tci-testi-avatar">
+            <div>
+              <div class="tci-testi-name">Sofía Valenzuela</div>
+              <div class="tci-testi-role">Asesora Residencial</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8. Preguntas Frecuentes (FAQ interactivo) -->
+  <section class="tci-section">
+    <div class="tci-container">
+      <div class="tci-section-header" style="text-align: center;">
+        <span class="tag">Resolvemos tus Dudas</span>
+        <h2>Preguntas Frecuentes</h2>
+        <p style="margin: 6px auto 0 auto;">Todo lo que necesitas saber antes de empezar a formarte.</p>
+      </div>
+
+      <div class="tci-faq-list">
+        
+        <div class="tci-faq-item active">
+          <div class="tci-faq-question" onclick="toggleFaq(this)">
+            <span>¿Cómo y cuándo tengo acceso a los cursos?</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </div>
+          <div class="tci-faq-answer">
+            El acceso es 100% inmediato. En cuanto te inscribes en el aula virtual, podrás ver los videos, lecturas y descargar las plantillas desde cualquier computadora o teléfono móvil las 24 horas del día.
+          </div>
+        </div>
+
+        <div class="tci-faq-item">
+          <div class="tci-faq-question" onclick="toggleFaq(this)">
+            <span>¿Recibiré un certificado oficial al terminar?</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </div>
+          <div class="tci-faq-answer">
+            Sí. Al completar todas las lecciones y superar el cuestionario de evaluación, el sistema genera automáticamente un Certificado Oficial en PDF con tu nombre y un código QR de autenticidad emitido por TusCursosInmobiliarios.
+          </div>
+        </div>
+
+        <div class="tci-faq-item">
+          <div class="tci-faq-question" onclick="toggleFaq(this)">
+            <span>¿Los cursos tienen fecha de caducidad?</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </div>
+          <div class="tci-faq-answer">
+            No. Tienes acceso continuo para repasar las lecciones cuantas veces quieras y disfrutar de las futuras actualizaciones del temario sin ningún costo adicional.
+          </div>
+        </div>
+
+        <div class="tci-faq-item">
+          <div class="tci-faq-question" onclick="toggleFaq(this)">
+            <span>¿Qué métodos de pago aceptan?</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </div>
+          <div class="tci-faq-answer">
+            Aceptamos tarjetas de crédito y débito internacionales (Visa, Mastercard, American Express), PayPal y transferencias bancarias directas con confirmación instantánea.
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- 9. Final Call to Action Banner -->
+  <div class="tci-container">
+    <div class="tci-final-cta">
+      <h2>Comienza a Multiplicar tus Resultados Hoy Mismo</h2>
+      <p>Únete a más de 3,400 profesionales inmobiliarios que ya están aplicando nuestras técnicas en el mercado.</p>
+      <a href="https://aula.tuscursosinmobiliarios.com" target="_blank" class="tci-btn" style="background: #ffffff; color: #4338ca; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
+        <span>Ingresar al Aula Virtual Ahora</span>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+      </a>
+    </div>
+  </div>
+
+</div>
+
+<!-- JAVASCRIPT LIGERO Y AUTOCONTENIDO (Filtro por Categorías y Acordeón FAQ) -->
+<script>
+  // Filtro de categorías estilo Udemy
+  function filterCategory(cat, btn) {
+    var buttons = document.querySelectorAll('.tci-cat-btn');
+    buttons.forEach(function(b) { b.classList.remove('active'); });
+    btn.classList.add('active');
+
+    var cards = document.querySelectorAll('.tci-course-card');
+    cards.forEach(function(card) {
+      if (cat === 'todos' || card.getAttribute('data-cat') === cat) {
+        card.style.display = 'flex';
+      } else {
+        card.style.display = 'none';
+      }
+    });
+  }
+
+  // Acordeón interactivo para Preguntas Frecuentes
+  function toggleFaq(header) {
+    var item = header.parentElement;
+    var allItems = document.querySelectorAll('.tci-faq-item');
+    allItems.forEach(function(el) {
+      if (el !== item) el.classList.remove('active');
+    });
+    item.classList.toggle('active');
+  }
+</script>
+
+</body>
+</html>
