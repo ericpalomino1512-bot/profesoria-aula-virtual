@@ -1,0 +1,28 @@
+name: Supabase Keep-Alive
+
+on:
+  schedule:
+    # Se ejecuta cada 3 días a las 06:00 UTC.
+    # Supabase pausa los proyectos tras 7 días de inactividad, por lo que cada 3 días garantiza que nunca se pause.
+    - cron: '0 6 */3 * *'
+  workflow_dispatch: # Permite ejecutarlo manualmente en cualquier momento desde GitHub
+
+jobs:
+  keep-alive:
+    name: Ping Supabase Database
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send keep-alive ping to Supabase
+        run: |
+          echo "Enviando ping de actividad a Supabase (https://abuwxwryefnqnfizvbuy.supabase.co)..."
+          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+            -H "apikey: sb_publishable_KbNfP6qjHXdm-xQtHxJ48g_HHM-mMCJ" \
+            -H "Authorization: Bearer sb_publishable_KbNfP6qjHXdm-xQtHxJ48g_HHM-mMCJ" \
+            "https://abuwxwryefnqnfizvbuy.supabase.co/rest/v1/profiles?select=id&limit=1")
+          
+          echo "Respuesta HTTP de Supabase: $HTTP_STATUS"
+          if [ "$HTTP_STATUS" -ge 200 ] && [ "$HTTP_STATUS" -lt 500 ]; then
+            echo "✅ Proyecto de Supabase activo y contador de inactividad reiniciado exitosamente."
+          else
+            echo "⚠️ Código HTTP recibido: $HTTP_STATUS. Si el proyecto estaba pausado previamente, recuerda reanudarlo en supabase.com/dashboard."
+          fi
