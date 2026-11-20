@@ -17,7 +17,8 @@ import {
   AlertCircle, 
   Loader2, 
   GraduationCap, 
-  BookOpen 
+  BookOpen,
+  ShieldCheck 
 } from 'lucide-react';
 
 interface AuthModalProps {
@@ -220,8 +221,50 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               Cerrar sesión
             </button>
           </div>
+        ) : mode === 'register' && isTeacherTarget ? (
+          /* Notice when user selects "Soy Profesor" in Register mode - Prevents unauthorized teacher self-registration */
+          <div className="space-y-4 py-1 animate-in fade-in duration-200">
+            <div className="p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900/50 space-y-2.5">
+              <div className="flex items-center gap-2 text-amber-800 dark:text-amber-300 font-bold text-xs">
+                <ShieldCheck className="w-4 h-4 text-amber-600" />
+                <span>Acceso Docente Restringido</span>
+              </div>
+              <h4 className="text-sm font-bold text-slate-900 dark:text-white">
+                Se requiere autorización previa de administración
+              </h4>
+              <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                Para impartir o crear cursos en <strong>TusCursosInmobiliarios</strong>, tu correo electrónico debe ser habilitado previamente por la administración antes de poder darte de alta.
+              </p>
+            </div>
+
+            <div className="space-y-2 pt-1">
+              <a
+                href="mailto:hola@tucorretaje.com?subject=Solicitud%20de%20Acceso%20Docente%20-%20TusCursosInmobiliarios&body=Hola%20Administraci%C3%B3n,%20deseo%20solicitar%20autorizaci%C3%B3n%20para%20crear%20y%20subir%20cursos%20como%20profesor%20en%20el%20Campus."
+                className="w-full py-2.5 px-4 rounded-xl bg-violet-600 hover:bg-violet-500 text-white font-bold text-xs shadow-md shadow-violet-500/20 flex items-center justify-center gap-2 transition-transform active:scale-95 text-center cursor-pointer"
+              >
+                <Mail className="w-4 h-4" />
+                <span>Solicitar Autorización a Administración</span>
+              </a>
+
+              <button
+                type="button"
+                onClick={() => setMode('login')}
+                className="w-full py-2.5 px-3 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 font-bold text-xs transition-colors cursor-pointer"
+              >
+                ¿Ya fuiste aprobado? Iniciar Sesión de Profesor
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setRoleTarget('student')}
+                className="w-full py-2 text-center text-xs text-violet-600 dark:text-violet-400 font-semibold hover:underline cursor-pointer block"
+              >
+                ← Volver y registrarme como Alumno
+              </button>
+            </div>
+          </div>
         ) : (
-          /* Form Login / Register / Forgot */
+          /* Form Login / Register (Student) / Forgot */
           <form onSubmit={handleSubmit} className="space-y-3.5">
             {mode === 'register' && (
               <div>
