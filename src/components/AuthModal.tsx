@@ -3,7 +3,8 @@ import type { StudentUser } from '../types/course';
 import { 
   signUpStudent, 
   signInStudent, 
-  resetStudentPassword 
+  resetStudentPassword,
+  isAuthorizedTeacherEmail
 } from '../services/authService';
 import { 
   User, 
@@ -69,6 +70,16 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     setLoading(true);
 
     try {
+      // Si intenta ingresar como profesor, verificar primero en Supabase antes de proceder
+      if (isTeacherTarget) {
+        const isApprovedTeacher = await isAuthorizedTeacherEmail(email.trim());
+        if (!isApprovedTeacher) {
+          setErrorMessage('Este correo no está registrado como profesor autorizado por la administración de TusCursosInmobiliarios. Solicita tu alta docente a hola@tucorretaje.com o ingresa como Alumno.');
+          setLoading(false);
+          return;
+        }
+      }
+
       if (mode === 'register') {
         const res = await signUpStudent(email.trim(), password, name.trim(), isTeacherTarget);
         if (res.error) {
