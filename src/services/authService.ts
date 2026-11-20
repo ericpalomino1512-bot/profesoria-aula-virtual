@@ -6,30 +6,47 @@ export interface AuthResponse {
   error: string | null;
 }
 
-// Check if an email is an authorized administrator or professor (Checks local superadmins + Supabase cloud database)
-export const isAuthorizedTeacherEmail = async (email: string): Promise<boolean> => {
+// Check detailed status of a professor (Authorized vs Paused)
+export const getTeacherAuthorizationStatus = async (email: string): Promise<{ isAuthorized: boolean; isPaused: boolean }> => {
   const normalized = email.trim().toLowerCase();
   
-  // Superadmins
+  // Superadmins are never paused
   const superadmins = [
     'eric.palomino1512@gmail.com',
     'ericpalomino1512@gmail.com',
     'hola@tucorretaje.com'
   ];
-  if (superadmins.includes(normalized)) return true;
+  if (superadmins.includes(normalized)) {
+    return { isAuthorized: true, isPaused: false };
+  }
 
   // Check in Supabase authorized_teachers table
   try {
     const { data } = await supabase
       .from('authorized_teachers')
-      .select('email')
+      .select('email, approved_by')
       .ilike('email', normalized)
       .maybeSingle();
 
-    return Boolean(data);
+    if (!data) {
+      return { isAuthorized: false, isPaused: false };
+    }
+
+    const isPaused = Boolean(
+      (data as any).status === 'paused' ||
+      (data.approved_by && data.approved_by.includes('[PAUSADO]'))
+    );
+
+    return { isAuthorized: true, isPaused };
   } catch (e) {
-    return false;
+    return { isAuthorized: false, isPaused: false };
   }
+};
+
+// Check if an email is an authorized and active administrator or professor
+export const isAuthorizedTeacherEmail = async (email: string): Promise<boolean> => {
+  const status = await getTeacherAuthorizationStatus(email);
+  return status.isAuthorized && !status.isPaused;
 };
 
 // Register new user with Email & Password

@@ -8,7 +8,9 @@ import {
   AlertCircle, 
   Loader2, 
   X, 
-  ShieldCheck
+  ShieldCheck,
+  Pause,
+  Play
 } from 'lucide-react';
 
 interface TeacherManagerModalProps {
@@ -96,8 +98,38 @@ export const TeacherManagerModal: React.FC<TeacherManagerModalProps> = ({
     }
   };
 
+  const handleTogglePause = async (teacher: AuthorizedTeacher, setPaused: boolean) => {
+    setSaving(true);
+    setMessage(null);
+    try {
+      const baseApprovedBy = (teacher.approved_by || adminEmail).replace(/\s*\[PAUSADO\]/g, '').trim();
+      const updatedApprovedBy = setPaused ? `${baseApprovedBy} [PAUSADO]` : baseApprovedBy;
+
+      const { error } = await supabase
+        .from('authorized_teachers')
+        .update({ approved_by: updatedApprovedBy })
+        .eq('id', teacher.id);
+
+      if (error) {
+        setMessage({ text: 'Error al cambiar el estado del profesor.', type: 'error' });
+      } else {
+        setMessage({ 
+          text: setPaused 
+            ? `Profesor ${teacher.full_name || teacher.email} puesto en PAUSA temporal.` 
+            : `Profesor ${teacher.full_name || teacher.email} REACTIVADO con éxito.`, 
+          type: 'success' 
+        });
+        fetchTeachers();
+      }
+    } catch (err: any) {
+      setMessage({ text: err.message || 'Error de conexión', type: 'error' });
+    } finally {
+      setSaving(false);
+    }
+  };
+
   const handleDeleteTeacher = async (teacher: AuthorizedTeacher) => {
-    if (!confirm(`¿Deseas revocar el permiso de profesor a ${teacher.email}?`)) return;
+    if (!confirm(`¿Deseas eliminar definitivamente de la lista a ${teacher.email}?`)) return;
 
     try {
       await supabase.from('authorized_teachers').delete().eq('id', teacher.id);
@@ -203,19 +235,37 @@ export const TeacherManagerModal: React.FC<TeacherManagerModalProps> = ({
           ) : (
             <div className="divide-y divide-slate-100 dark:divide-slate-800 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden bg-white dark:bg-slate-900">
               {teachers.map((t) => {
-                const isSuperadmin = t.email === 'ericpalomino1512@gmail.com' || t.email === 'hola@tucorretaje.com';
+                const isSuperadmin = t.email === 'ericpalomino1512@gmail.com' || t.email === 'eric.palomino1512@gmail.com' || t.email === 'hola@tucorretaje.com';
+                const isPaused = Boolean((t as any).status === 'paused' || (t.approved_by && t.approved_by.includes('[PAUSADO]')));
 
                 return (
-                  <div key={t.id} className="p-3 flex items-center justify-between gap-3 text-xs">
+                  <div key={t.id} className={`p-3 flex items-center justify-between gap-3 text-xs transition-colors ${
+                    isPaused ? 'bg-amber-50/50 dark:bg-amber-950/20' : ''
+                  }`}>
                     <div className="flex items-center gap-2.5 truncate">
-                      <div className="w-7 h-7 rounded-lg bg-violet-50 dark:bg-violet-950/50 text-violet-600 dark:text-violet-400 flex items-center justify-center shrink-0">
-                        <Users className="w-3.5 h-3.5" />
+                      <div className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 ${
+                        isPaused 
+                          ? 'bg-amber-100 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400' 
+                          : 'bg-violet-50 dark:bg-violet-950/50 text-violet-600 dark:text-violet-400'
+                      }`}>
+                        {isPaused ? <Pause className="w-3.5 h-3.5" /> : <Users className="w-3.5 h-3.5" />}
                       </div>
                       <div className="truncate">
-                        <strong className="block text-slate-800 dark:text-slate-200 truncate">
-                          {t.full_name || t.email.split('@')[0]}
-                        </strong>
-                        <span className="text-[11px] text-slate-500 dark:text-slate-400 font-mono">
+                        <div className="flex items-center gap-2 truncate">
+                          <strong className="text-slate-800 dark:text-slate-200 truncate">
+                            {t.full_name || t.email.split('@')[0]}
+                          </strong>
+                          {isPaused ? (
+                            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300">
+                              En Pausa
+                            </span>
+                          ) : (
+                            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">
+                              Activo
+                            </span>
+                          )}
+                        </div>
+                        <span className="text-[11px] text-slate-500 dark:text-slate-400 font-mono block">
                           {t.email}
                         </span>
                       </div>
@@ -223,18 +273,34 @@ export const TeacherManagerModal: React.FC<TeacherManagerModalProps> = ({
 
                     <div className="flex items-center gap-2 shrink-0">
                       {isSuperadmin ? (
-                        <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-amber-100 dark:bg-amber-950/70 text-amber-700 dark:text-amber-300">
+                        <span className="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-purple-100 dark:bg-purple-950/70 text-purple-700 dark:text-purple-300">
                           Superadmin
                         </span>
                       ) : (
-                        <button
-                          type="button"
-                          onClick={() => handleDeleteTeacher(t)}
-                          className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors"
-                          title="Revocar acceso de profesor"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
+                        <>
+                          <button
+                            type="button"
+                            onClick={() => handleTogglePause(t, !isPaused)}
+                            className={`px-2.5 py-1 rounded-lg font-bold text-[11px] transition-all flex items-center gap-1 cursor-pointer ${
+                              isPaused
+                                ? 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100 dark:bg-emerald-950/40 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800'
+                                : 'bg-amber-50 text-amber-700 hover:bg-amber-100 dark:bg-amber-950/40 dark:text-amber-300 border border-amber-200 dark:border-amber-800'
+                            }`}
+                            title={isPaused ? "Reactivar profesor" : "Poner en pausa temporalmente"}
+                          >
+                            {isPaused ? <Play className="w-3 h-3 fill-current" /> : <Pause className="w-3 h-3" />}
+                            <span>{isPaused ? 'Reactivar' : 'Pausar'}</span>
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteTeacher(t)}
+                            className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors cursor-pointer"
+                            title="Eliminar definitivamente"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </>
                       )}
                     </div>
                   </div>

@@ -4,7 +4,7 @@ import {
   signUpStudent, 
   signInStudent, 
   resetStudentPassword,
-  isAuthorizedTeacherEmail
+  getTeacherAuthorizationStatus
 } from '../services/authService';
 import { 
   User, 
@@ -72,8 +72,13 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     try {
       // Si intenta ingresar como profesor, verificar primero en Supabase antes de proceder
       if (isTeacherTarget) {
-        const isApprovedTeacher = await isAuthorizedTeacherEmail(email.trim());
-        if (!isApprovedTeacher) {
+        const { isAuthorized, isPaused } = await getTeacherAuthorizationStatus(email.trim());
+        if (isPaused) {
+          setErrorMessage('Tu cuenta docente se encuentra temporalmente en PAUSA por la administración. Comunícate con hola@tucorretaje.com para reactivarla.');
+          setLoading(false);
+          return;
+        }
+        if (!isAuthorized) {
           setErrorMessage('Este correo no está registrado como profesor autorizado por la administración de TusCursosInmobiliarios. Solicita tu alta docente a hola@tucorretaje.com o ingresa como Alumno.');
           setLoading(false);
           return;
