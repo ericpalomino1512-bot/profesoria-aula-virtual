@@ -102,7 +102,7 @@ export const signUpStudent = async (
         updated_at: new Date().toISOString(),
       });
 
-      // Send registration alert to admin email hola@tucorretaje.com (non-blocking)
+      // Send registration alert to admin emails (hola@tucorretaje.com and eric.palomino1512@gmail.com)
       try {
         fetch('https://formspree.io/f/xblywekg', {
           method: 'POST',
@@ -110,6 +110,8 @@ export const signUpStudent = async (
           body: JSON.stringify({
             alerta: 'Nuevo Alumno Registrado en TusCursosInmobiliarios Campus',
             destinatario: 'hola@tucorretaje.com',
+            copia_personal: 'eric.palomino1512@gmail.com',
+            destinatarios: 'hola@tucorretaje.com, eric.palomino1512@gmail.com',
             alumno_nombre: student.name,
             alumno_email: student.email,
             alumno_id: student.id,

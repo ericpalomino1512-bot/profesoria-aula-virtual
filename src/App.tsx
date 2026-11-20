@@ -23,7 +23,8 @@ import {
   getStoredCatalog, 
   saveCatalogCourse, 
   getEnrolledCourseIds, 
-  enrollInCourse 
+  enrollInCourse,
+  deleteCatalogCourse
 } from './services/catalogService';
 import { getActiveStudentSession, signOutStudent, enrollUserInSupabase } from './services/authService';
 import { AlertCircle, X } from 'lucide-react';
@@ -241,6 +242,16 @@ export const App: React.FC = () => {
       };
       setCurrentCourse(updatedCurrent);
       localStorage.setItem('current_course_data', JSON.stringify(updatedCurrent));
+    }
+  };
+
+  // Delete course from catalog (SuperAdmin only)
+  const handleDeleteCatalogCourse = (course: Course) => {
+    const updated = deleteCatalogCourse(course.id);
+    setCatalogCourses(updated);
+    if (currentCourse && currentCourse.id === course.id) {
+      setCurrentCourse(null);
+      localStorage.removeItem('current_course_data');
     }
   };
 
@@ -521,6 +532,7 @@ export const App: React.FC = () => {
             onEnrollCourse={handleEnrollCourse}
             onOpenCreator={() => setActiveView('course-creator')}
             onEditPrice={isSuperAdmin ? (c) => setEditingPriceCourse(c) : undefined}
+            onDeleteCourse={isSuperAdmin ? handleDeleteCatalogCourse : undefined}
           />
         )}
 

@@ -14,7 +14,8 @@ import {
   Layers,
   Heart,
   Play,
-  Tag
+  Tag,
+  Trash2
 } from 'lucide-react';
 
 interface CourseCatalogProps {
@@ -26,6 +27,7 @@ interface CourseCatalogProps {
   onEnrollCourse: (course: Course) => void;
   onOpenCreator?: () => void;
   onEditPrice?: (course: Course) => void;
+  onDeleteCourse?: (course: Course) => void;
 }
 
 export const CourseCatalog: React.FC<CourseCatalogProps> = ({
@@ -36,6 +38,7 @@ export const CourseCatalog: React.FC<CourseCatalogProps> = ({
   onSelectCourse,
   onEnrollCourse,
   onEditPrice,
+  onDeleteCourse,
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('todos');
@@ -156,7 +159,7 @@ export const CourseCatalog: React.FC<CourseCatalogProps> = ({
                   )}
                 </div>
 
-                {/* Price, Admin Edit and Wishlist Heart */}
+                {/* Price, Admin Controls and Wishlist Heart */}
                 <div className="absolute top-3 right-3 flex items-center gap-1.5 z-10">
                   {onEditPrice && (
                     <button
@@ -169,6 +172,22 @@ export const CourseCatalog: React.FC<CourseCatalogProps> = ({
                       title="Ajustar precio oficial (Admin)"
                     >
                       <Tag className="w-4 h-4" />
+                    </button>
+                  )}
+
+                  {onDeleteCourse && (
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (window.confirm(`¿Estás seguro de que deseas eliminar permanentemente el curso "${course.title}"? Esta acción no se puede deshacer.`)) {
+                          onDeleteCourse(course);
+                        }
+                      }}
+                      className="p-2 rounded-xl backdrop-blur-xs transition-all shadow-md bg-slate-900/70 hover:bg-rose-600 text-rose-300 hover:text-white cursor-pointer"
+                      title="Eliminar curso del catálogo (Admin)"
+                    >
+                      <Trash2 className="w-4 h-4" />
                     </button>
                   )}
 

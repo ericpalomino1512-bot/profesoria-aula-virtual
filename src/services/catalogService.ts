@@ -1,15 +1,6 @@
 import type { Course } from '../types/course';
-import { DEMO_COURSE } from './demoCourse';
 
 export const INITIAL_CATALOG_COURSES: Course[] = [
-  {
-    ...DEMO_COURSE,
-    id: 'quimica-organica-ebau',
-    price: 29,
-    currency: 'USD',
-    category: 'Ciencias y Bachillerato',
-    isPublished: true,
-  },
   {
     id: 'captacion-exclusivas-ia',
     title: 'Captación de Propiedades en Exclusiva con Inteligencia Artificial',
@@ -327,12 +318,24 @@ export const getStoredCatalog = (): Course[] => {
     try {
       const parsed = JSON.parse(stored);
       if (Array.isArray(parsed) && parsed.length > 0) {
-        return parsed;
+        // Filter out legacy non-real-estate demo courses if still lingering in localStorage
+        const filtered = parsed.filter((c: Course) => c.id !== 'quimica-organica-ebau');
+        if (filtered.length !== parsed.length) {
+          localStorage.setItem('profesoria_catalog_courses', JSON.stringify(filtered));
+        }
+        return filtered.length > 0 ? filtered : INITIAL_CATALOG_COURSES;
       }
     } catch (e) {}
   }
   localStorage.setItem('profesoria_catalog_courses', JSON.stringify(INITIAL_CATALOG_COURSES));
   return INITIAL_CATALOG_COURSES;
+};
+
+export const deleteCatalogCourse = (courseId: string): Course[] => {
+  const current = getStoredCatalog();
+  const updated = current.filter(c => c.id !== courseId);
+  localStorage.setItem('profesoria_catalog_courses', JSON.stringify(updated));
+  return updated;
 };
 
 export const saveCatalogCourse = (course: Course): void => {
