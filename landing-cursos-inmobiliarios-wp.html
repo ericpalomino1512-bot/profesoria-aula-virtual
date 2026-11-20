@@ -82,6 +82,172 @@
       text-transform: uppercase;
     }
 
+    /* =========================================
+       CABECERA / NAVBAR ESTILO UDEMY Y COURSERA
+       ========================================= */
+    .tci-navbar {
+      background: #ffffff;
+      border-bottom: 1px solid var(--border-color);
+      padding: 12px 0;
+      position: sticky;
+      top: 0;
+      z-index: 250;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    .tci-nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .tci-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: var(--secondary);
+      font-weight: 900;
+      font-size: 18px;
+      letter-spacing: -0.02em;
+      flex-shrink: 0;
+    }
+    .tci-logo-icon {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, #6366f1, #4f46e5);
+      color: #ffffff;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 10px rgba(99,102,241,0.3);
+    }
+    .tci-logo-text span {
+      color: var(--primary);
+    }
+    .tci-search-box {
+      flex: 1;
+      max-width: 420px;
+      position: relative;
+    }
+    .tci-search-input {
+      width: 100%;
+      padding: 10px 16px 10px 38px;
+      border-radius: var(--radius-full);
+      border: 1px solid #cbd5e1;
+      background: #f8fafc;
+      font-size: 13px;
+      color: var(--text-main);
+      outline: none;
+      transition: all 0.2s;
+    }
+    .tci-search-input:focus {
+      background: #ffffff;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(99,102,241,0.15);
+    }
+    .tci-search-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #94a3b8;
+      pointer-events: none;
+    }
+    .tci-nav-links {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+    .tci-nav-link {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .tci-nav-link:hover {
+      color: var(--primary);
+    }
+    .tci-auth-btns {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+    .tci-btn-nav-login {
+      padding: 8px 16px;
+      border-radius: var(--radius-sm);
+      border: 1px solid #cbd5e1;
+      background: #ffffff;
+      color: var(--secondary);
+      font-size: 13px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .tci-btn-nav-login:hover {
+      border-color: var(--secondary);
+      background: #f8fafc;
+    }
+    .tci-btn-nav-register {
+      padding: 8px 16px;
+      border-radius: var(--radius-sm);
+      background: var(--secondary);
+      color: #ffffff;
+      font-size: 13px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .tci-btn-nav-register:hover {
+      background: #1e293b;
+    }
+    .tci-btn-nav-campus {
+      padding: 9px 18px;
+      border-radius: var(--radius-sm);
+      background: linear-gradient(135deg, #6366f1, #4f46e5);
+      color: #ffffff;
+      font-size: 13px;
+      font-weight: 800;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 4px 12px rgba(99,102,241,0.3);
+      transition: all 0.2s;
+    }
+    .tci-btn-nav-campus:hover {
+      background: linear-gradient(135deg, #4f46e5, #4338ca);
+      transform: translateY(-1px);
+    }
+    .tci-hamburger {
+      display: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 6px;
+      color: var(--secondary);
+    }
+
+    @media (max-width: 990px) {
+      .tci-search-box {
+        display: none;
+      }
+      .tci-nav-links {
+        display: none;
+      }
+      .tci-hamburger {
+        display: block;
+      }
+    }
+    @media (max-width: 600px) {
+      .tci-auth-btns .tci-btn-nav-login,
+      .tci-auth-btns .tci-btn-nav-register {
+        display: none;
+      }
+    }
+
     /* Hero Section (Coursera / Udemy style) */
     .tci-hero {
       background: linear-gradient(180deg, #0f172a 0%, #1e1b4b 100%);
@@ -757,6 +923,58 @@
     </div>
   </div>
 
+  <!-- 1.1 Cabecera / Navbar estilo Udemy y Coursera -->
+  <header class="tci-navbar">
+    <div class="tci-container">
+      <div class="tci-nav-inner">
+        
+        <!-- Logo de la Academia -->
+        <a href="#catalogo" class="tci-logo">
+          <div class="tci-logo-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c3 3 9 3 12 0v-5"></path></svg>
+          </div>
+          <div class="tci-logo-text">
+            TusCursos<span>Inmobiliarios</span>
+          </div>
+        </a>
+
+        <!-- Buscador estilo Udemy -->
+        <div class="tci-search-box">
+          <svg class="tci-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          <input 
+            type="text" 
+            class="tci-search-input" 
+            placeholder="Buscar cursos: captación, tasación, marketing, ventas..." 
+            oninput="handleQuickSearch(this.value)"
+          >
+        </div>
+
+        <!-- Enlaces Rápidos de Navegación -->
+        <div class="tci-nav-links">
+          <a href="#catalogo" class="tci-nav-link">Catálogo</a>
+          <a href="#beneficios" class="tci-nav-link">Beneficios</a>
+          <a href="#testimonios" class="tci-nav-link">Opiniones</a>
+          <a href="#faq" class="tci-nav-link">Preguntas</a>
+        </div>
+
+        <!-- Botones de Acción: Iniciar Sesión, Registrarse e Ingresar al Campus -->
+        <div class="tci-auth-btns">
+          <a href="https://aula.tuscursosinmobiliarios.com/?action=login" target="_blank" class="tci-btn-nav-login" title="Acceso a usuarios existentes">
+            Iniciar Sesión
+          </a>
+          <a href="https://aula.tuscursosinmobiliarios.com/?action=register" target="_blank" class="tci-btn-nav-register" title="Crear cuenta gratuita">
+            Registrarse
+          </a>
+          <a href="https://aula.tuscursosinmobiliarios.com/?view=dashboard" target="_blank" class="tci-btn-nav-campus" title="Ir directamente a tu aula virtual">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c3 3 9 3 12 0v-5"></path></svg>
+            <span>Mi Campus</span>
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </header>
+
   <!-- 2. Hero Section estilo Coursera / Udemy -->
   <section class="tci-hero">
     <div class="tci-container">
@@ -1268,6 +1486,20 @@
 
 <!-- JAVASCRIPT LIGERO Y AUTOCONTENIDO (Filtro por Categorías y Acordeón FAQ) -->
 <script>
+  // Buscador interactivo estilo Udemy
+  function handleQuickSearch(query) {
+    var term = query.toLowerCase().trim();
+    var cards = document.querySelectorAll('.tci-course-card');
+    cards.forEach(function(card) {
+      var text = card.textContent.toLowerCase();
+      if (!term || text.indexOf(term) !== -1) {
+        card.style.display = 'flex';
+      } else {
+        card.style.display = 'none';
+      }
+    });
+  }
+
   // Filtro de categorías estilo Udemy
   function filterCategory(cat, btn) {
     var buttons = document.querySelectorAll('.tci-cat-btn');
