@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Navbar } from './components/Navbar';
 import { CourseCatalog } from './components/CourseCatalog';
+import { LandingView } from './components/LandingView';
 import { MyCoursesView } from './components/MyCoursesView';
 import { CourseDesignHome } from './components/CourseDesignHome';
 import { CourseView } from './components/CourseView';
@@ -87,12 +88,20 @@ export const App: React.FC = () => {
   const [catalogCourses, setCatalogCourses] = useState<Course[]>(() => getStoredCatalog());
   const [enrolledIds, setEnrolledIds] = useState<string[]>(() => getEnrolledCourseIds());
 
-  // Active view: 'catalog' | 'my-courses' | 'course-viewer' | 'course-creator'
+  // Active view: 'landing' | 'catalog' | 'my-courses' | 'dashboard' | 'course-viewer' | 'course-creator'
   const [activeView, setActiveView] = useState<AppActiveView>(() => {
     // If URL has a shared course hash, open viewer immediately
     const sharedFromUrl = getSharedCourseFromUrl();
     if (sharedFromUrl) return 'course-viewer';
-    return 'catalog';
+
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const v = params.get('view');
+      if (v && ['landing', 'catalog', 'my-courses', 'dashboard', 'course-creator'].includes(v)) {
+        return v as AppActiveView;
+      }
+    }
+    return 'landing';
   });
 
   // Active course for viewer
@@ -174,7 +183,7 @@ export const App: React.FC = () => {
           }
         }
       } else if (viewParam) {
-        if (['catalog', 'my-courses', 'dashboard', 'course-creator'].includes(viewParam)) {
+        if (['landing', 'catalog', 'my-courses', 'dashboard', 'course-creator'].includes(viewParam)) {
           setActiveView(viewParam as AppActiveView);
         }
       }
@@ -460,26 +469,28 @@ export const App: React.FC = () => {
     <div className="min-h-screen bg-slate-50 dark:bg-[#0c0e17] text-slate-800 dark:text-slate-100 transition-colors flex flex-col font-sans selection:bg-violet-500 selection:text-white">
       
       {/* Top Navigation */}
-      <Navbar
-        darkMode={darkMode}
-        onToggleDarkMode={() => setDarkMode(!darkMode)}
-        onOpenApiKeyModal={() => setIsApiKeyModalOpen(true)}
-        hasApiKey={Boolean(apiKey)}
-        activeView={activeView}
-        onChangeView={(view) => {
-          setActiveView(view);
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        }}
-        currentUser={currentUser}
-        onOpenAuthModal={() => {
-          setAuthModalInitialMode('login');
-          setAuthModalIsTeacherTarget(false);
-          setIsAuthModalOpen(true);
-        }}
-        onOpenTeacherManager={() => setIsTeacherManagerOpen(true)}
-        onOpenShareModal={() => setIsShareModalOpen(true)}
-        onCourseImported={handleCourseImported}
-      />
+      {activeView !== 'landing' && (
+        <Navbar
+          darkMode={darkMode}
+          onToggleDarkMode={() => setDarkMode(!darkMode)}
+          onOpenApiKeyModal={() => setIsApiKeyModalOpen(true)}
+          hasApiKey={Boolean(apiKey)}
+          activeView={activeView}
+          onChangeView={(view) => {
+            setActiveView(view);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+          currentUser={currentUser}
+          onOpenAuthModal={() => {
+            setAuthModalInitialMode('login');
+            setAuthModalIsTeacherTarget(false);
+            setIsAuthModalOpen(true);
+          }}
+          onOpenTeacherManager={() => setIsTeacherManagerOpen(true)}
+          onOpenShareModal={() => setIsShareModalOpen(true)}
+          onCourseImported={handleCourseImported}
+        />
+      )}
 
       {/* Error notification banner */}
       {errorMessage && (
@@ -522,6 +533,33 @@ export const App: React.FC = () => {
 
       {/* Main Views Coordinator */}
       <main className="flex-1">
+        {activeView === 'landing' && (
+          <LandingView
+            courses={catalogCourses}
+            currentUser={currentUser}
+            onSelectCourse={handleSelectCourse}
+            onExploreCatalog={() => {
+              setActiveView('catalog');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            onOpenAuthModal={(mode) => {
+              setAuthModalInitialMode(mode);
+              setAuthModalIsTeacherTarget(false);
+              setIsAuthModalOpen(true);
+            }}
+            onOpenDashboard={() => {
+              if (currentUser) {
+                setActiveView('dashboard');
+              } else {
+                setAuthModalInitialMode('login');
+                setAuthModalIsTeacherTarget(false);
+                setIsAuthModalOpen(true);
+              }
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+          />
+        )}
+
         {activeView === 'catalog' && (
           <CourseCatalog
             courses={catalogCourses}

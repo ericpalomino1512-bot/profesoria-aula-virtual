@@ -59,10 +59,11 @@ export const Navbar: React.FC<NavbarProps> = ({
         {/* Brand */}
         <div className="flex items-center gap-3">
           <div 
-            onClick={() => onChangeView('catalog')}
+            onClick={() => onChangeView('landing')}
             className="flex items-center gap-2.5 cursor-pointer group"
             role="button"
             tabIndex={0}
+            title="Ir a la portada principal"
           >
             <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-violet-600 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-violet-500/20 group-hover:scale-105 transition-transform">
               <GraduationCap className="w-5 h-5" />
@@ -85,6 +86,17 @@ export const Navbar: React.FC<NavbarProps> = ({
 
         {/* Center Navigation Tabs (Udemy Style) */}
         <nav className="hidden md:flex items-center gap-1 bg-slate-100/80 dark:bg-slate-800/80 p-1 rounded-2xl border border-slate-200/60 dark:border-slate-700/60">
+          <button
+            onClick={() => onChangeView('landing')}
+            className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
+              activeView === 'landing'
+                ? 'bg-white dark:bg-slate-900 text-violet-700 dark:text-violet-300 shadow-xs'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+            }`}
+          >
+            Inicio
+          </button>
+
           <button
             onClick={() => onChangeView('catalog')}
             className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
