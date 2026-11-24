@@ -36,6 +36,12 @@
     }
 
     /* Reset scoped to landing container */
+    html {
+      scroll-behavior: smooth;
+    }
+    .tci-section, section {
+      scroll-margin-top: 85px;
+    }
     .tci-wrapper * {
       box-sizing: border-box;
       margin: 0;
@@ -228,6 +234,31 @@
       cursor: pointer;
       padding: 6px;
       color: var(--secondary);
+    }
+    .tci-mobile-drawer {
+      display: none;
+      background: #ffffff;
+      border-top: 1px solid #e2e8f0;
+      padding: 12px 20px 16px 20px;
+      flex-direction: column;
+      gap: 4px;
+      box-shadow: 0 10px 15px -3px rgba(0,0,0,0.08);
+    }
+    .tci-mobile-drawer.open {
+      display: flex;
+    }
+    .tci-mobile-link {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--secondary);
+      text-decoration: none;
+      padding: 8px 12px;
+      border-radius: var(--radius-sm);
+      transition: background 0.15s, color 0.15s;
+    }
+    .tci-mobile-link:hover {
+      background: #f1f5f9;
+      color: var(--primary);
     }
 
     @media (max-width: 990px) {
@@ -933,10 +964,10 @@
 
         <!-- Enlaces Rápidos de Navegación -->
         <div class="tci-nav-links">
-          <a href="#catalogo" class="tci-nav-link">Catálogo</a>
+          <a href="https://aula.tuscursosinmobiliarios.com/?view=catalog" target="_blank" class="tci-nav-link" title="Ir al catálogo completo en el aula virtual">Catálogo</a>
           <a href="#beneficios" class="tci-nav-link">Beneficios</a>
-          <a href="#testimonios" class="tci-nav-link">Opiniones</a>
-          <a href="#faq" class="tci-nav-link">Preguntas</a>
+          <a href="#opiniones" class="tci-nav-link">Opiniones</a>
+          <a href="#preguntas" class="tci-nav-link">Preguntas</a>
         </div>
 
         <!-- Botones de Acción: Iniciar Sesión, Registrarse e Ingresar al Campus -->
@@ -951,8 +982,23 @@
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c3 3 9 3 12 0v-5"></path></svg>
             <span>Mi Campus</span>
           </a>
+          <button type="button" class="tci-hamburger" onclick="toggleMobileMenu()" aria-label="Abrir menú de navegación">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+          </button>
         </div>
 
+      </div>
+    </div>
+
+    <!-- Menú Desplegable Móvil -->
+    <div id="tci-mobile-drawer" class="tci-mobile-drawer">
+      <a href="https://aula.tuscursosinmobiliarios.com/?view=catalog" target="_blank" class="tci-mobile-link" onclick="toggleMobileMenu()">📚 Catálogo en el Aula</a>
+      <a href="#beneficios" class="tci-mobile-link" onclick="toggleMobileMenu()">✨ Beneficios</a>
+      <a href="#opiniones" class="tci-mobile-link" onclick="toggleMobileMenu()">⭐ Opiniones</a>
+      <a href="#preguntas" class="tci-mobile-link" onclick="toggleMobileMenu()">❓ Preguntas</a>
+      <div style="display: flex; gap: 8px; margin-top: 8px; padding-top: 10px; border-top: 1px solid #e2e8f0;">
+        <a href="https://aula.tuscursosinmobiliarios.com/?action=login" target="_blank" class="tci-btn-nav-login" style="flex: 1; text-align: center;">Iniciar Sesión</a>
+        <a href="https://aula.tuscursosinmobiliarios.com/?action=register" target="_blank" class="tci-btn-nav-register" style="flex: 1; text-align: center;">Registrarse</a>
       </div>
     </div>
   </header>
@@ -1269,7 +1315,7 @@
   </section>
 
   <!-- 5. Por qué formarte con nosotros (Coursera / Value Pillars) -->
-  <section class="tci-section tci-benefits">
+  <section id="beneficios" class="tci-section tci-benefits">
     <div class="tci-container">
       <div class="tci-section-header">
         <span class="tag">Ventajas del Campus</span>
@@ -1343,7 +1389,8 @@
   </section>
 
   <!-- 7. Testimonios de Alumnos Reales -->
-  <section class="tci-section tci-testimonials">
+  <span id="testimonios" style="display:block; position:relative; top:-85px; visibility:hidden;"></span>
+  <section id="opiniones" class="tci-section tci-testimonials">
     <div class="tci-container">
       <div class="tci-section-header">
         <span class="tag" style="color: #818cf8;">Opiniones Reales</span>
@@ -1398,7 +1445,8 @@
   </section>
 
   <!-- 8. Preguntas Frecuentes (FAQ interactivo) -->
-  <section class="tci-section">
+  <span id="faq" style="display:block; position:relative; top:-85px; visibility:hidden;"></span>
+  <section id="preguntas" class="tci-section">
     <div class="tci-container">
       <div class="tci-section-header" style="text-align: center;">
         <span class="tag">Resolvemos tus Dudas</span>
@@ -1506,6 +1554,14 @@
       if (el !== item) el.classList.remove('active');
     });
     item.classList.toggle('active');
+  }
+
+  // Menú hamburguesa desplegable en móviles
+  function toggleMobileMenu() {
+    var drawer = document.getElementById('tci-mobile-drawer');
+    if (drawer) {
+      drawer.classList.toggle('open');
+    }
   }
 </script>
 
