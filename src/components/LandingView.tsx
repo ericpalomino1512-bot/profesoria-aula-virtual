@@ -825,12 +825,8 @@ export const LandingView: React.FC<LandingViewProps> = ({
                 <span>TusCursos<span className="text-indigo-400">Inmobiliarios</span></span>
               </div>
               <p className="text-sm text-slate-300 max-w-md leading-relaxed">
-                Plataforma líder en formación práctica para agentes y agencias inmobiliarias. Programas actualizados con Inteligencia Artificial y certificación con código QR.
+                Somos parte de <a href="https://tucorretaje.com" target="_blank" rel="noopener noreferrer" className="font-bold text-white hover:text-indigo-400 underline decoration-indigo-500/50 underline-offset-2 transition-colors">Tucorretaje.com</a>. Plataforma líder en formación práctica para agentes y agencias inmobiliarias. Campus Virtual de Especialización Inmobiliaria en temas como tasación inmobiliaria, marketing inmobiliario, tributación inmobiliaria, entre otros.
               </p>
-              <div className="pt-2 text-xs text-slate-400 space-y-1">
-                <p className="font-semibold text-slate-200 text-sm">Campus Virtual de Especialización Inmobiliaria</p>
-                <p>Acreditación digital verificable las 24 horas del día.</p>
-              </div>
             </div>
 
             {/* Col 3: Navegación */}
