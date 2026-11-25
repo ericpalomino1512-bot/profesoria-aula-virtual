@@ -809,132 +809,117 @@ export const LandingView: React.FC<LandingViewProps> = ({
       {/* ========================================================
           8. FOOTER PROFESIONAL CON LEGAL Y LIBRO DE RECLAMACIONES
           ======================================================== */}
-      <footer className="bg-slate-950 text-slate-400 py-14 border-t border-slate-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
+      <footer className="bg-slate-950 text-slate-300 py-16 border-t border-slate-800">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+          
+          {/* Columnas Principales */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10">
             
-            {/* Brand */}
-            <div className="lg:col-span-2 space-y-3">
-              <div className="flex items-center gap-2 text-white font-bold text-base">
-                <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white">
-                  <GraduationCap className="w-5 h-5" />
+            {/* Col 1 & 2: Brand */}
+            <div className="lg:col-span-2 space-y-4">
+              <div className="flex items-center gap-3 text-white font-extrabold text-lg">
+                <div className="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-md shadow-indigo-600/30">
+                  <GraduationCap className="w-6 h-6" />
                 </div>
                 <span>TusCursos<span className="text-indigo-400">Inmobiliarios</span></span>
               </div>
-              <p className="text-xs text-slate-400 max-w-sm leading-relaxed">
+              <p className="text-sm text-slate-300 max-w-md leading-relaxed">
                 Plataforma líder en formación práctica para agentes y agencias inmobiliarias. Programas actualizados con Inteligencia Artificial y certificación con código QR.
               </p>
-              <div className="pt-2 text-[11px] text-slate-500 space-y-1">
-                <p className="font-semibold text-slate-400">Campus Virtual de Especialización Inmobiliaria</p>
-                <p>Acreditación digital verificable las 24 horas.</p>
+              <div className="pt-2 text-xs text-slate-400 space-y-1">
+                <p className="font-semibold text-slate-200 text-sm">Campus Virtual de Especialización Inmobiliaria</p>
+                <p>Acreditación digital verificable las 24 horas del día.</p>
               </div>
             </div>
 
-            {/* Links */}
-            <div className="space-y-2.5 text-xs">
-              <span className="font-bold text-white block uppercase tracking-wider text-[11px]">Navegación</span>
-              <ul className="space-y-2">
+            {/* Col 3: Navegación */}
+            <div className="space-y-3.5">
+              <span className="font-bold text-white block uppercase tracking-wider text-xs">Navegación</span>
+              <ul className="space-y-2.5 text-sm">
                 <li>
-                  <button onClick={() => scrollToSection('catalogo')} className="hover:text-white transition-colors cursor-pointer text-left">
+                  <button onClick={() => scrollToSection('catalogo')} className="text-slate-300 hover:text-white transition-colors cursor-pointer text-left">
                     Catálogo de Cursos
                   </button>
                 </li>
                 <li>
-                  <button onClick={() => scrollToSection('beneficios')} className="hover:text-white transition-colors cursor-pointer text-left">
+                  <button onClick={() => scrollToSection('beneficios')} className="text-slate-300 hover:text-white transition-colors cursor-pointer text-left">
                     Beneficios del Campus
                   </button>
                 </li>
                 <li>
-                  <button onClick={() => scrollToSection('opiniones')} className="hover:text-white transition-colors cursor-pointer text-left">
+                  <button onClick={() => scrollToSection('opiniones')} className="text-slate-300 hover:text-white transition-colors cursor-pointer text-left">
                     Opiniones y Testimonios
                   </button>
                 </li>
                 <li>
-                  <button onClick={() => scrollToSection('preguntas')} className="hover:text-white transition-colors cursor-pointer text-left">
+                  <button onClick={() => scrollToSection('preguntas')} className="text-slate-300 hover:text-white transition-colors cursor-pointer text-left">
                     Preguntas Frecuentes
                   </button>
                 </li>
               </ul>
             </div>
 
-            {/* Legal Links */}
-            <div className="space-y-2.5 text-xs">
-              <span className="font-bold text-white block uppercase tracking-wider text-[11px]">Legal y Políticas</span>
-              <ul className="space-y-2">
+            {/* Col 4: Legal y Políticas (Sin libro de reclamaciones, que va al centro) */}
+            <div className="space-y-3.5">
+              <span className="font-bold text-white block uppercase tracking-wider text-xs">Legal y Políticas</span>
+              <ul className="space-y-2.5 text-sm">
                 <li>
-                  <button onClick={() => openLegal('terms')} className="hover:text-indigo-400 transition-colors cursor-pointer text-left">
+                  <button onClick={() => openLegal('terms')} className="text-slate-300 hover:text-indigo-400 transition-colors cursor-pointer text-left">
                     Términos y Condiciones
                   </button>
                 </li>
                 <li>
-                  <button onClick={() => openLegal('cookies')} className="hover:text-indigo-400 transition-colors cursor-pointer text-left">
+                  <button onClick={() => openLegal('cookies')} className="text-slate-300 hover:text-indigo-400 transition-colors cursor-pointer text-left">
                     Política de Cookies
                   </button>
                 </li>
                 <li>
-                  <button onClick={() => openLegal('privacy')} className="hover:text-indigo-400 transition-colors cursor-pointer text-left">
+                  <button onClick={() => openLegal('privacy')} className="text-slate-300 hover:text-indigo-400 transition-colors cursor-pointer text-left">
                     Política de Privacidad
-                  </button>
-                </li>
-                <li className="pt-1">
-                  <button 
-                    onClick={() => openLegal('claims')} 
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500/15 border border-amber-500/30 text-amber-400 hover:bg-amber-500/25 transition-all font-semibold cursor-pointer text-left text-[11px]"
-                    title="Libro de Reclamaciones Virtual conforme al Código de Protección al Consumidor"
-                  >
-                    <span>📖 Libro de Reclamaciones</span>
                   </button>
                 </li>
               </ul>
             </div>
 
-            {/* Support / Contact */}
-            <div className="space-y-2.5 text-xs">
-              <span className="font-bold text-white block uppercase tracking-wider text-[11px]">Atención y Soporte</span>
-              <p className="text-slate-400">
+            {/* Col 5: Atención y Soporte */}
+            <div className="space-y-3.5">
+              <span className="font-bold text-white block uppercase tracking-wider text-xs">Atención y Soporte</span>
+              <p className="text-sm text-slate-300">
                 ¿Dudas sobre inscripciones o acceso institucional?
               </p>
               <a
                 href="mailto:hola@tucorretaje.com"
-                className="inline-block font-semibold text-indigo-400 hover:text-indigo-300 transition-colors text-sm"
+                className="inline-block font-bold text-indigo-400 hover:text-indigo-300 transition-colors text-base"
               >
                 hola@tucorretaje.com
               </a>
-              <p className="text-[11px] text-slate-500 pt-1">
+              <p className="text-xs text-slate-400 pt-1 leading-relaxed">
                 Atención académica y soporte a alumnos de lunes a sábado.
               </p>
             </div>
 
           </div>
 
-          <div className="pt-6 border-t border-slate-900 flex flex-col md:flex-row items-center justify-between text-xs text-slate-500 gap-4">
-            <p>© {new Date().getFullYear()} TusCursosInmobiliarios. Todos los derechos reservados.</p>
-            <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-[11px]">
-              <button onClick={() => openLegal('terms')} className="hover:text-slate-300 transition-colors cursor-pointer">
-                Términos y Condiciones
-              </button>
-              <span>•</span>
-              <button onClick={() => openLegal('cookies')} className="hover:text-slate-300 transition-colors cursor-pointer">
-                Política de Cookies
-              </button>
-              <span>•</span>
-              <button onClick={() => openLegal('privacy')} className="hover:text-slate-300 transition-colors cursor-pointer">
-                Política de Privacidad
-              </button>
-              <span>•</span>
-              <button onClick={() => openLegal('claims')} className="hover:text-amber-400 font-semibold text-amber-400/90 transition-colors cursor-pointer flex items-center gap-1">
-                <span>Libro de Reclamaciones</span>
-              </button>
-            </div>
-            <div className="flex items-center gap-3">
-              <button onClick={onOpenDashboard} className="hover:text-slate-300 transition-colors cursor-pointer">
-                Mi Campus
-              </button>
-              <button onClick={() => onOpenAuthModal('login')} className="hover:text-slate-300 transition-colors cursor-pointer">
-                Iniciar Sesión
-              </button>
-            </div>
+          {/* Sección Central Destacada: Libro de Reclamaciones */}
+          <div className="pt-8 border-t border-slate-900 flex flex-col items-center justify-center text-center space-y-3">
+            <button
+              onClick={() => openLegal('claims')}
+              className="inline-flex items-center gap-3 px-6 py-3.5 rounded-2xl bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 hover:border-amber-500/50 text-amber-300 hover:text-amber-200 transition-all font-bold text-sm sm:text-base shadow-lg shadow-amber-950/20 cursor-pointer group"
+              title="Libro de Reclamaciones Virtual conforme a las normas de protección al consumidor"
+            >
+              <span className="text-xl group-hover:scale-110 transition-transform">📖</span>
+              <span>Libro de Reclamaciones Virtual</span>
+            </button>
+            <p className="text-xs sm:text-sm text-slate-400 max-w-lg leading-relaxed">
+              Conforme a lo establecido en el Código de Protección y Defensa del Consumidor de TusCursosInmobiliarios.
+            </p>
           </div>
+
+          {/* Barra Inferior Limpia (Solo derechos de autor, sin duplicados) */}
+          <div className="pt-6 border-t border-slate-900 text-center text-xs sm:text-sm text-slate-400">
+            <p>© {new Date().getFullYear()} TusCursosInmobiliarios. Todos los derechos reservados. Campus de Especialización Inmobiliaria.</p>
+          </div>
+
         </div>
       </footer>
 
