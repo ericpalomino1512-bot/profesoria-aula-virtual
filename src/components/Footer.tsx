@@ -50,7 +50,7 @@ export const Footer: React.FC<FooterProps> = ({
               </li>
               <li>
                 <a 
-                  href="https://tucorretaje.com/blog" 
+                  href="https://blog.tucorretaje.pe/" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-1.5 text-slate-300 hover:text-indigo-400 transition-colors"

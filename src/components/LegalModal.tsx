@@ -256,7 +256,7 @@ export const LegalModal: React.FC<LegalModalProps> = ({
                     <ExternalLink className="w-3.5 h-3.5" />
                   </a>
                   <a
-                    href="https://tucorretaje.com/blog"
+                    href="https://blog.tucorretaje.pe/"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold text-xs transition-colors"

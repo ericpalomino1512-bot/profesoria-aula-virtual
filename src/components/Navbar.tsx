@@ -133,7 +133,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           )}
 
           <a
-            href="https://tucorretaje.com/blog"
+            href="https://blog.tucorretaje.pe/"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-1 px-3.5 py-1.5 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all"
