@@ -5,7 +5,6 @@ import {
   BookOpen, 
   Clock, 
   Award, 
-  Sparkles, 
   CheckCircle2, 
   ArrowRight, 
   ExternalLink, 
@@ -67,15 +66,15 @@ export const CourseCatalog: React.FC<CourseCatalogProps> = ({
       <div className="relative overflow-hidden rounded-3xl bg-linear-to-br from-violet-900 via-indigo-900 to-slate-900 text-white p-8 sm:p-12 shadow-2xl border border-violet-500/20">
         <div className="absolute top-0 right-0 -mt-10 -mr-10 w-96 h-96 bg-violet-500/20 rounded-full blur-3xl pointer-events-none" />
         <div className="relative z-10 max-w-3xl space-y-4">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-violet-500/30 border border-violet-400/40 text-xs font-semibold tracking-wide text-violet-200">
-            <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-            <span>Campus Virtual & Academia Inmobiliaria</span>
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-violet-500/30 border border-violet-400/40 text-xs font-semibold tracking-wide text-violet-200">
+            <BookOpen className="w-3.5 h-3.5 text-amber-300" />
+            <span>Catálogo Académico Oficial • Todos los Programas</span>
           </div>
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-tight text-white">
-            Domina el sector inmobiliario con itinerarios interactivos y videos con IA
+            Catálogo Completo de Cursos Inmobiliarios
           </h1>
           <p className="text-sm sm:text-base text-violet-100/90 leading-relaxed max-w-2xl">
-            Aprende a tu propio ritmo con lecciones sintetizadas, casos prácticos reales, cuestionarios pedagógicos y materiales de apoyo descargables en Excel y PDF.
+            Explora todos nuestros programas de especialización práctica para agentes y agencias inmobiliarias. Aprende a tu propio ritmo con casos reales, plantillas descargables en Excel y certificación digital verificable con código QR.
           </p>
 
           <div className="pt-2 flex flex-wrap items-center gap-3">
