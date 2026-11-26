@@ -5,12 +5,14 @@ import {
   Shield,
   Cookie,
   BookOpenCheck,
+  Building2,
+  ExternalLink,
   Send,
   CheckCircle2,
   AlertCircle
 } from 'lucide-react';
 
-export type LegalTabType = 'terms' | 'privacy' | 'cookies' | 'claims';
+export type LegalTabType = 'terms' | 'privacy' | 'cookies' | 'claims' | 'about';
 
 interface LegalModalProps {
   isOpen: boolean;
@@ -95,6 +97,7 @@ export const LegalModal: React.FC<LegalModalProps> = ({
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 shrink-0">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-xs">
+              {activeTab === 'about' && <Building2 className="w-4 h-4" />}
               {activeTab === 'terms' && <FileText className="w-4 h-4" />}
               {activeTab === 'privacy' && <Shield className="w-4 h-4" />}
               {activeTab === 'cookies' && <Cookie className="w-4 h-4" />}
@@ -102,10 +105,10 @@ export const LegalModal: React.FC<LegalModalProps> = ({
             </div>
             <div>
               <h3 className="font-bold text-base text-slate-900 dark:text-white">
-                Información Legal y Políticas
+                {activeTab === 'about' ? 'Quiénes Somos' : 'Información Legal y Políticas'}
               </h3>
               <p className="text-[11px] text-slate-500 dark:text-slate-400">
-                TusCursosInmobiliarios • Transparencia y Protección al Consumidor
+                TusCursosInmobiliarios • Ecosistema Tucorretaje.com
               </p>
             </div>
           </div>
@@ -120,6 +123,18 @@ export const LegalModal: React.FC<LegalModalProps> = ({
 
         {/* Navigation Tabs */}
         <div className="flex items-center gap-1.5 px-6 pt-3 pb-2 border-b border-slate-200 dark:border-slate-800 bg-slate-50/30 dark:bg-slate-900/30 overflow-x-auto shrink-0 scrollbar-none">
+          <button
+            onClick={() => { setActiveTab('about'); setClaimSuccessCode(null); }}
+            className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
+              activeTab === 'about'
+                ? 'bg-indigo-600 text-white shadow-xs'
+                : 'text-slate-600 dark:text-slate-400 hover:bg-slate-200/60 dark:hover:bg-slate-800'
+            }`}
+          >
+            <Building2 className="w-3.5 h-3.5" />
+            <span>Quiénes Somos</span>
+          </button>
+
           <button
             onClick={() => { setActiveTab('terms'); setClaimSuccessCode(null); }}
             className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
@@ -172,6 +187,88 @@ export const LegalModal: React.FC<LegalModalProps> = ({
         {/* Content Area */}
         <div className="flex-1 overflow-y-auto p-6 text-xs sm:text-sm space-y-6 leading-relaxed">
           
+          {/* TAB 0: QUIÉNES SOMOS */}
+          {activeTab === 'about' && (
+            <div className="space-y-6 animate-in fade-in duration-150">
+              <div className="pb-3 border-b border-slate-200 dark:border-slate-800">
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 text-xs font-bold uppercase tracking-wider mb-2">
+                  Campus Virtual Inmobiliario
+                </span>
+                <h4 className="text-lg font-black text-slate-900 dark:text-white">
+                  Quiénes Somos • TusCursosInmobiliarios
+                </h4>
+                <p className="text-xs text-slate-500 mt-1">
+                  Somos parte del ecosistema oficial de <a href="https://tucorretaje.com" target="_blank" rel="noopener noreferrer" className="font-bold text-indigo-600 dark:text-indigo-400 hover:underline">Tucorretaje.com</a>
+                </p>
+              </div>
+
+              <div className="space-y-4 text-slate-600 dark:text-slate-300">
+                <section className="space-y-2">
+                  <h5 className="font-bold text-slate-900 dark:text-white text-sm">
+                    Nuestra Misión
+                  </h5>
+                  <p>
+                    <strong>TusCursosInmobiliarios</strong> nace como el centro de especialización técnica y práctica para agentes, asesores y agencias del sector inmobiliario. Nuestra misión es transformar el modelo tradicional de formación inmobiliaria en una experiencia 100% aplicable, eliminando el exceso de teoría abstracta y concentrándonos en las operaciones del día a día: captaciones en exclusiva, valuación certera, blindaje contractual notarial y marketing digital avanzado.
+                  </p>
+                </section>
+
+                <section className="space-y-2">
+                  <h5 className="font-bold text-slate-900 dark:text-white text-sm">
+                    Parte del Ecosistema Tucorretaje.com
+                  </h5>
+                  <p>
+                    Al pertenecer a <a href="https://tucorretaje.com" target="_blank" rel="noopener noreferrer" className="text-indigo-600 dark:text-indigo-400 font-bold hover:underline">Tucorretaje.com</a>, nuestros programas de estudio están diseñados con base en las tendencias, estadísticas y necesidades operativas reales del mercado actual. Los alumnos no aprenden teoría desactualizada, sino las mejores prácticas implementadas por profesionales activos en corretaje inmobiliario.
+                  </p>
+                </section>
+
+                <section className="space-y-2">
+                  <h5 className="font-bold text-slate-900 dark:text-white text-sm">
+                    Pilares de Formación
+                  </h5>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                    <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60">
+                      <strong className="block text-slate-900 dark:text-white font-bold text-xs mb-1">🎯 100% Práctico y Operativo</strong>
+                      <span className="text-xs text-slate-500 dark:text-slate-400">Contratos modelo, plantillas de tasación en Excel, guiones de captación y simulaciones notariales reales.</span>
+                    </div>
+                    <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60">
+                      <strong className="block text-slate-900 dark:text-white font-bold text-xs mb-1">🤖 Inteligencia Artificial Aplicada</strong>
+                      <span className="text-xs text-slate-500 dark:text-slate-400">Herramientas digitales e IA para prospección, análisis de mercado y automatización de marketing.</span>
+                    </div>
+                    <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60">
+                      <strong className="block text-slate-900 dark:text-white font-bold text-xs mb-1">⏱️ Estudio a Tu Ritmo 24/7</strong>
+                      <span className="text-xs text-slate-500 dark:text-slate-400">Acceso ilimitado en cualquier momento y desde cualquier dispositivo (computadora, tablet o móvil).</span>
+                    </div>
+                    <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60">
+                      <strong className="block text-slate-900 dark:text-white font-bold text-xs mb-1">📜 Acreditación con Código QR</strong>
+                      <span className="text-xs text-slate-500 dark:text-slate-400">Certificación verificable en tiempo real para respaldo profesional ante clientes y agencias.</span>
+                    </div>
+                  </div>
+                </section>
+
+                <div className="pt-3 flex flex-wrap items-center gap-3">
+                  <a
+                    href="https://tucorretaje.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs transition-colors shadow-sm"
+                  >
+                    <span>Conocer Tucorretaje.com</span>
+                    <ExternalLink className="w-3.5 h-3.5" />
+                  </a>
+                  <a
+                    href="https://tucorretaje.com/blog"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold text-xs transition-colors"
+                  >
+                    <span>Leer Nuestro Blog</span>
+                    <ExternalLink className="w-3.5 h-3.5" />
+                  </a>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* TAB 1: TÉRMINOS Y CONDICIONES */}
           {activeTab === 'terms' && (
             <div className="space-y-5 animate-in fade-in duration-150">

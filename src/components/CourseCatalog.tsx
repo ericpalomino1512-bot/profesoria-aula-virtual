@@ -28,6 +28,7 @@ interface CourseCatalogProps {
   onOpenCreator?: () => void;
   onEditPrice?: (course: Course) => void;
   onDeleteCourse?: (course: Course) => void;
+  onNavigateHome?: () => void;
 }
 
 export const CourseCatalog: React.FC<CourseCatalogProps> = ({
@@ -39,6 +40,7 @@ export const CourseCatalog: React.FC<CourseCatalogProps> = ({
   onEnrollCourse,
   onEditPrice,
   onDeleteCourse,
+  onNavigateHome,
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('todos');
@@ -77,13 +79,21 @@ export const CourseCatalog: React.FC<CourseCatalogProps> = ({
           </p>
 
           <div className="pt-2 flex flex-wrap items-center gap-3">
+            {onNavigateHome && (
+              <button 
+                onClick={onNavigateHome}
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-xs sm:text-sm font-semibold text-white border border-white/20 backdrop-blur-xs transition-colors cursor-pointer"
+              >
+                <span>← Volver al Inicio</span>
+              </button>
+            )}
             <a 
-              href="https://tuscursosinmobiliarios.com" 
+              href="https://tucorretaje.com" 
               target="_blank" 
               rel="noreferrer"
               className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-xs sm:text-sm font-semibold text-white border border-white/20 backdrop-blur-xs transition-colors"
             >
-              <span>← Volver a TusCursosInmobiliarios.com</span>
+              <span>Conoce Tucorretaje.com</span>
               <ExternalLink className="w-3.5 h-3.5 opacity-70" />
             </a>
           </div>

@@ -14,6 +14,8 @@ import { UserDashboard } from './components/UserDashboard';
 import { CourseDetailsPage } from './components/CourseDetailsPage';
 import { CheckoutPaymentModal } from './components/CheckoutPaymentModal';
 import { EditCoursePriceModal } from './components/EditCoursePriceModal';
+import { Footer } from './components/Footer';
+import { LegalModal, type LegalTabType } from './components/LegalModal';
 import type { Course, CourseFormData, AppActiveView, StudentUser, CourseProgress } from './types/course';
 import { generateCourseWithGemini, getStoredApiKey } from './services/geminiService';
 import { buildCourseFromDocuments, buildCourseFromTopic } from './services/localCourseEngine';
@@ -83,6 +85,8 @@ export const App: React.FC = () => {
   const [isTeacherManagerOpen, setIsTeacherManagerOpen] = useState<boolean>(false);
   const [authModalInitialMode, setAuthModalInitialMode] = useState<'login' | 'register' | 'forgot'>('login');
   const [authModalIsTeacherTarget, setAuthModalIsTeacherTarget] = useState<boolean>(false);
+  const [isLegalModalOpen, setIsLegalModalOpen] = useState<boolean>(false);
+  const [legalModalTab, setLegalModalTab] = useState<LegalTabType>('terms');
 
   // Catalog & Enrollment State
   const [catalogCourses, setCatalogCourses] = useState<Course[]>(() => getStoredCatalog());
@@ -481,14 +485,18 @@ export const App: React.FC = () => {
             window.scrollTo({ top: 0, behavior: 'smooth' });
           }}
           currentUser={currentUser}
-          onOpenAuthModal={() => {
-            setAuthModalInitialMode('login');
+          onOpenAuthModal={(mode = 'login') => {
+            setAuthModalInitialMode(mode);
             setAuthModalIsTeacherTarget(false);
             setIsAuthModalOpen(true);
           }}
           onOpenTeacherManager={() => setIsTeacherManagerOpen(true)}
           onOpenShareModal={() => setIsShareModalOpen(true)}
           onCourseImported={handleCourseImported}
+          onOpenLegal={(tab) => {
+            setLegalModalTab(tab);
+            setIsLegalModalOpen(true);
+          }}
         />
       )}
 
@@ -557,6 +565,10 @@ export const App: React.FC = () => {
               }
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
+            onOpenLegal={(tab) => {
+              setLegalModalTab(tab);
+              setIsLegalModalOpen(true);
+            }}
           />
         )}
 
@@ -571,6 +583,10 @@ export const App: React.FC = () => {
             onOpenCreator={() => setActiveView('course-creator')}
             onEditPrice={isSuperAdmin ? (c) => setEditingPriceCourse(c) : undefined}
             onDeleteCourse={isSuperAdmin ? handleDeleteCatalogCourse : undefined}
+            onNavigateHome={() => {
+              setActiveView('landing');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
           />
         )}
 
@@ -745,6 +761,31 @@ export const App: React.FC = () => {
           onClose={() => setIsShareModalOpen(false)}
         />
       )}
+
+      {/* Global Footer (Visible on landing, catalog, dashboard, my-courses, etc.) */}
+      {activeView !== 'course-viewer' && (
+        <Footer
+          onOpenLegal={(tab) => {
+            setLegalModalTab(tab);
+            setIsLegalModalOpen(true);
+          }}
+          onNavigateHome={() => {
+            setActiveView('landing');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+          onNavigateCatalog={() => {
+            setActiveView('catalog');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+        />
+      )}
+
+      {/* Global Legal & About Modal */}
+      <LegalModal
+        isOpen={isLegalModalOpen}
+        initialTab={legalModalTab}
+        onClose={() => setIsLegalModalOpen(false)}
+      />
 
     </div>
   );
